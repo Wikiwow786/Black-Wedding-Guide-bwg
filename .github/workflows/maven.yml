@@ -1,4 +1,4 @@
-name: Build and Deploy JAR to S3
+name: Build and Deploy
 
 on:
   push:
@@ -32,6 +32,7 @@ jobs:
           mkdir deploy
           cp target/bwg-service.jar deploy/bwg-service.jar
           cp target/classes/application.properties deploy/application.properties
+          cp target/classes/logback-spring.xml deploy/logback-spring.xml
           cp appspec.yml deploy/
           cp -r scripts deploy/
 

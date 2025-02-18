@@ -5,6 +5,8 @@ files:
     destination: /opt/bwg-service/
   - source: application.properties
     destination: /opt/bwg-service/config/
+  - source: logback-spring.xml
+    destination: /opt/bwg-service/config/
 permissions:
   - object: /
     pattern: "**"
