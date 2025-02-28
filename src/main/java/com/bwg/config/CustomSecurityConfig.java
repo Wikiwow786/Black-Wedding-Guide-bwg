@@ -1,0 +1,47 @@
+package com.bwg.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.List;
+
+@Configuration
+@EnableMethodSecurity
+public class CustomSecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // ✅ Use stateless authentication
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                )
+                .build();
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(List.of(new NoOpAuthenticationProvider()));
+    }
+
+    private static class NoOpAuthenticationProvider implements AuthenticationProvider {
+        @Override
+        public org.springframework.security.core.Authentication authenticate(org.springframework.security.core.Authentication authentication) {
+            return authentication;
+        }
+
+        @Override
+        public boolean supports(Class<?> authentication) {
+            return true;
+        }
+    }
+}

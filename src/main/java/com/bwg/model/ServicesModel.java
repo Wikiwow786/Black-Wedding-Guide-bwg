@@ -1,0 +1,154 @@
+package com.bwg.model;
+
+import com.bwg.domain.Services;
+import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.repository.ServicesRepository;
+import com.bwg.util.BeanUtil;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.ObjectUtils;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+
+public class ServicesModel {
+
+    private Long serviceId;
+    private String uServiceId;
+    private Long vendorId;
+    private Long categoryId;
+    private String serviceName;
+    private String description;
+    private Double priceMin;
+    private Double priceMax;
+    private String availability;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
+    private List<BookingsModel> bookingsModel;
+    private List<ReviewsModel> reviewsModel;
+
+    public ServicesModel() {
+    }
+
+    public ServicesModel(Services services) {
+        this.serviceId = services.getServiceId();
+        this.uServiceId = services.getUServiceId();
+        this.vendorId = services.getVendor().getVendorId();
+        this.categoryId = services.getCategory().getCategoryId();
+        this.serviceName = services.getServiceName();
+        this.description = services.getDescription();
+        this.priceMin = services.getPriceMin();
+        this.priceMax = services.getPriceMax();
+        this.availability = services.getAvailability();
+        this.createdAt = services.getCreatedAt();
+        this.updatedAt = services.getUpdatedAt();
+        this.bookingsModel = !ObjectUtils.isEmpty(services.getBookings()) ?
+                services.getBookings().stream().map(BookingsModel::new).toList() : null;
+        this.reviewsModel = !ObjectUtils.isEmpty(services.getReviews()) ?
+                services.getReviews().stream().map(ReviewsModel::new).toList() : null;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public Long getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(Long vendorId) {
+        this.vendorId = vendorId;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getPriceMin() {
+        return priceMin;
+    }
+
+    public void setPriceMin(Double priceMin) {
+        this.priceMin = priceMin;
+    }
+
+    public Double getPriceMax() {
+        return priceMax;
+    }
+
+    public void setPriceMax(Double priceMax) {
+        this.priceMax = priceMax;
+    }
+
+    public String getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(String availability) {
+        this.availability = availability;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<BookingsModel> getBookingsModel() {
+        return bookingsModel;
+    }
+
+    public String getUServiceId() {
+        return uServiceId;
+    }
+
+    public void setUServiceId(String uServiceId) {
+        this.uServiceId = uServiceId;
+    }
+
+    public void setBookingsModel(List<BookingsModel> bookingsModel) {
+        this.bookingsModel = bookingsModel;
+    }
+
+    public List<ReviewsModel> getReviewsModel() {
+        return reviewsModel;
+    }
+
+    public void setReviewsModel(List<ReviewsModel> reviewsModel) {
+        this.reviewsModel = reviewsModel;
+    }
+}

@@ -1,0 +1,11 @@
+package com.bwg.logger;
+
+public enum LoggingEvent
+{
+    LOG_FETCH,
+    LOG_FETCH_EMPTY,
+    LOG_SERVICE_OR_REPOSITORY_EXCEPTION,
+    LOG_SERVICE_OR_REPOSITORY,
+    LOG_CONTROLLER,
+    LOG_CONTROLLER_EXCEPTION;
+}

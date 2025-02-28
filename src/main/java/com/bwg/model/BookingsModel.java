@@ -1,0 +1,102 @@
+package com.bwg.model;
+
+import com.bwg.domain.Bookings;
+import com.bwg.domain.Services;
+import com.bwg.domain.Users;
+import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.repository.BookingsRepository;
+import com.bwg.util.BeanUtil;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+
+import java.time.OffsetDateTime;
+
+public class BookingsModel {
+
+    private Long bookingId;
+    private String uBookingId;
+    private Long userId;
+    private Long serviceId;
+    private OffsetDateTime eventDate;
+    private Bookings.BookingStatus status;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
+
+    public BookingsModel() {
+    }
+
+    public BookingsModel(Bookings bookings) {
+        this.bookingId = bookings.getBookingId();
+        this.uBookingId = bookings.getUBookingId();
+        this.userId = bookings.getUser().getUserId();
+        this.serviceId = bookings.getService().getServiceId();
+        this.eventDate = bookings.getEventDate();
+        this.status = bookings.getStatus();
+        this.createdAt = bookings.getCreatedAt();
+        this.updatedAt = bookings.getUpdatedAt();
+    }
+
+    public Long getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(Long bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public OffsetDateTime getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(OffsetDateTime eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public Bookings.BookingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(Bookings.BookingStatus status) {
+        this.status = status;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public String getUBookingId() {
+        return uBookingId;
+    }
+
+    public void setUBookingId(String uBookingId) {
+        this.uBookingId = uBookingId;
+    }
+}

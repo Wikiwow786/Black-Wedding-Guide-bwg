@@ -1,0 +1,88 @@
+package com.bwg.service.impl;
+
+import com.bwg.domain.Services;
+import com.bwg.domain.Users;
+import com.bwg.exception.ResourceAlreadyExistsException;
+import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.model.AuthModel;
+import com.bwg.model.UsersModel;
+import com.bwg.repository.UsersRepository;
+import com.bwg.service.UsersService;
+import com.bwg.util.BeanUtil;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Objects;
+
+import static com.bwg.logger.Logger.format;
+import static com.bwg.logger.Logger.info;
+import static com.bwg.logger.LoggingEvent.LOG_SERVICE_OR_REPOSITORY;
+
+@Service
+public class UsersServiceImpl implements UsersService {
+
+    @Autowired
+    private UsersRepository usersRepository;
+
+    @Override
+    public List<Users> getAllUsers() {
+        info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
+        return usersRepository.findAll();
+    }
+
+    @Override
+    public Users getUserById(Long userId) {
+        info(LOG_SERVICE_OR_REPOSITORY, "Fetching User by Id {0}", userId);
+        return usersRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public Users createUser(UsersModel usersModel) {
+        info(LOG_SERVICE_OR_REPOSITORY, format("Creating User..."), this);
+
+        Users users = new Users();
+
+        if (null != usersRepository.findByEmailIgnoreCase(usersModel.getEmail())) {
+            throw new ResourceAlreadyExistsException("User already exists");
+        }
+
+        BeanUtils.copyProperties(usersModel, users);
+
+        users.setPasswordHash(encodePassword(usersModel.getPasswordHash()));
+        users.setCreatedAt(OffsetDateTime.now());
+        return usersRepository.save(users);
+    }
+
+    @Override
+    public Users updateUser(Long userId, UsersModel usersModel) {
+        Objects.requireNonNull(userId, "User ID cannot be null");
+
+        info(LOG_SERVICE_OR_REPOSITORY, format("Updating user info for userId {0}", userId), this);
+
+        var user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        BeanUtils.copyProperties(usersModel, user, "userId", "email", "passwordHash", "createdAt", "role");
+
+        user.setUpdatedAt(OffsetDateTime.now());
+        return usersRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        info(LOG_SERVICE_OR_REPOSITORY, format("Delete user information for userId {0} ", userId), this);
+        usersRepository.deleteById(userId);
+    }
+
+    private String encodePassword(String password) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+        return passwordEncoder.encode(password);
+    }
+}
