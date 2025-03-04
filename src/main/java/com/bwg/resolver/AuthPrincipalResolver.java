@@ -3,6 +3,8 @@ package com.bwg.resolver;
 import com.bwg.domain.Users;
 import com.bwg.model.AuthModel;
 import com.bwg.repository.UsersRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -20,13 +23,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.security.*;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
@@ -34,6 +36,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
             "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
 
     private final UsersRepository userRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public AuthPrincipalResolver(UsersRepository userRepository) {
@@ -49,75 +52,113 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
 
-        AuthPrincipal annotation = parameter.getParameterAnnotation(AuthPrincipal.class);
-        String authorization = null;
-
-        if (annotation != null) {
-            authorization = webRequest.getParameter(annotation.authorization());
-            if (!StringUtils.hasText(authorization)) {
-                authorization = webRequest.getHeader(annotation.authorization());
-            }
-        }
+        String authorization = extractAuthorization(webRequest, parameter.getParameterAnnotation(AuthPrincipal.class));
 
         if (!StringUtils.hasText(authorization)) {
             return new AuthModel(null, null, null, null);
         }
 
         AuthModel authModel = decodeToken(authorization);
-
-        Users user = userRepository.findByEmailIgnoreCase(authModel.email());
-
-        if (user != null) {
-            final String role = "ROLE_" + user.getRole().name().toUpperCase();
-            List<GrantedAuthority> authorities = List.of((GrantedAuthority) () -> role);
-
-            SecurityContextHolder.getContext().setAuthentication(
-                    new UsernamePasswordAuthenticationToken(authModel, null, authorities)
-            );
-
-            return new AuthModel(authModel.authorization(), authModel.userId(), authModel.email(), generateUuId());
-        }
-        return new AuthModel(authModel.authorization(), authModel.userId(), authModel.email(), null);
+        return authenticateUser(authModel);
     }
 
-    private AuthModel decodeToken(String tokenId) {
+    private String extractAuthorization(NativeWebRequest webRequest, AuthPrincipal annotation) {
+        if (annotation == null) return null;
+
+        String token = webRequest.getParameter(annotation.authorization());
+        if (!StringUtils.hasText(token)) {
+            token = webRequest.getHeader(annotation.authorization());
+        }
+
+        return (StringUtils.hasText(token) && token.startsWith("Bearer ")) ? token.substring(7) : token;
+    }
+    private AuthModel decodeToken(String token) {
         try {
-            PublicKey publicKey = getGooglePublicKey(tokenId);
+            PublicKey publicKey = getGooglePublicKey(token);
             Claims claims = Jwts.parser()
-                    .verifyWith(publicKey)
+                    .setSigningKey(publicKey)
                     .build()
-                    .parseSignedClaims(tokenId)
-                    .getPayload();
+                    .parseClaimsJws(token)
+                    .getBody();
 
-            String userId = claims.get("user_id", String.class);
-            String email = claims.get("email", String.class);
-
-            return new AuthModel(tokenId, userId, email,null);
-
+            return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), null);
         } catch (Exception e) {
             throw new RuntimeException("Invalid or expired token", e);
         }
     }
 
+    private PublicKey getGooglePublicKey(String token) throws IOException, GeneralSecurityException {
+        Map<String, String> publicKeys = objectMapper.readValue(new URL(GOOGLE_PUBLIC_KEYS_URL),
+                new TypeReference<>() {
+                });
 
-    private static PublicKey getGooglePublicKey(String token) throws IOException, GeneralSecurityException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> publicKeys = objectMapper.readValue(new URL(GOOGLE_PUBLIC_KEYS_URL), Map.class);
-        String headerJson = new String(Base64.getUrlDecoder().decode(token.split("\\.")[0]));
-        String keyId = objectMapper.readTree(headerJson).get("kid").asText();
+        String keyId = extractKeyIdFromToken(token);
         String publicKeyPem = publicKeys.get(keyId);
+
         if (publicKeyPem == null) {
             throw new RuntimeException("Public key not found for key ID: " + keyId);
         }
+
+        return convertPemToPublicKey(publicKeyPem);
+    }
+
+    private String extractKeyIdFromToken(String token) throws IOException {
+        String[] tokenParts = token.split("\\.");
+        if (tokenParts.length < 3) {
+            throw new RuntimeException("Invalid JWT: Malformed token structure");
+        }
+
+        JsonNode headerNode = objectMapper.readTree(decodeBase64UrlSafe(tokenParts[0]));
+        if (!headerNode.has("kid")) {
+            throw new RuntimeException("Invalid JWT: Missing 'kid' in header");
+        }
+
+        return headerNode.get("kid").asText();
+    }
+
+    private PublicKey convertPemToPublicKey(String pem) throws GeneralSecurityException {
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
         X509Certificate certificate = (X509Certificate) certFactory.generateCertificate(
-                new ByteArrayInputStream(publicKeyPem.getBytes()));
-
+                new ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8)));
         return certificate.getPublicKey();
     }
 
-    private String generateUuId(){
-        UUID uuid = UUID.randomUUID();
-        return uuid.toString();
+    private AuthModel authenticateUser(AuthModel authModel) {
+        Users user = userRepository.findByEmailIgnoreCase(authModel.email());
+
+        if (user != null) {
+            String role = "ROLE_" + user.getRole().name().toUpperCase();
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+
+            SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(authModel, null, authorities)
+            );
+
+            return new AuthModel(authModel.authorization(), authModel.userId(), authModel.email(), generateUuid());
+        }
+        return authModel;
+    }
+
+    private static String decodeBase64UrlSafe(String base64) {
+        if (base64 == null || base64.isEmpty()) {
+            throw new RuntimeException("Invalid JWT: Empty Base64 segment");
+        }
+
+        base64 = base64.trim().replaceAll("[^A-Za-z0-9\\-_=]", "")
+                .replace('-', '+').replace('_', '/');
+
+        while (base64.length() % 4 != 0) {
+            base64 += "=";
+        }
+
+        try {
+            return new String(Base64.getDecoder().decode(base64), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Base64 Decoding Failed", e);
+        }
+    }
+
+    private String generateUuid() {
+        return UUID.randomUUID().toString();
     }
 }

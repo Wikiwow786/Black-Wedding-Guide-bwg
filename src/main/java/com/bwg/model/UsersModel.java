@@ -2,11 +2,14 @@ package com.bwg.model;
 
 import com.bwg.domain.*;
 import com.bwg.domain.Users.*;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.util.ObjectUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UsersModel {
 
     private Long userId;

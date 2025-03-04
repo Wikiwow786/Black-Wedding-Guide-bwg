@@ -4,6 +4,8 @@ import com.bwg.domain.Categories;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.CategoriesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
@@ -12,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CategoriesModel {
 
     private Long categoryId;

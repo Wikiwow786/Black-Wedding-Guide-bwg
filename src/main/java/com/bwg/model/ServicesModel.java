@@ -4,6 +4,8 @@ import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
@@ -11,6 +13,7 @@ import org.springframework.util.ObjectUtils;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ServicesModel {
 
     private Long serviceId;

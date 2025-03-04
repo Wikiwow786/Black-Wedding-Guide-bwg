@@ -13,7 +13,6 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 public class WebMvcContext implements WebMvcConfigurer {
-
     private final AuthPrincipalResolver authPrincipalResolver;
 
     public WebMvcContext(@Lazy AuthPrincipalResolver authPrincipalResolver) {
@@ -21,8 +20,8 @@ public class WebMvcContext implements WebMvcConfigurer {
     }
 
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(authPrincipalResolver);
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(authPrincipalResolver);
     }
 
     @Bean

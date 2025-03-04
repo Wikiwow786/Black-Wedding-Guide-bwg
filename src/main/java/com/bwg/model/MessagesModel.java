@@ -4,11 +4,14 @@ import com.bwg.domain.Messages;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.MessagesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MessagesModel {
 
     private Long messageId;
