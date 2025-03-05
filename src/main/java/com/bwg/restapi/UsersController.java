@@ -27,20 +27,20 @@ public class UsersController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UsersModel> getUserById(@PathVariable(value = "userId") final Long userId) {
+    public ResponseEntity<UsersModel> getUserById(@PathVariable(value = "userId") final Long userId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new UsersModel(usersService.getUserById(userId)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @PutMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@PathVariable(value = "userId") final Long userId,
-                                            @RequestBody UsersModel usersModel) {
+                                            @RequestBody UsersModel usersModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new UsersModel(usersService.updateUser(userId, usersModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> delete(@PathVariable(value = "userId") final Long userId) {
+    public ResponseEntity<Void> delete(@PathVariable(value = "userId") final Long userId,@AuthPrincipal AuthModel authModel) {
         usersService.deleteUser(userId);
         return ResponseEntity.ok().build();
     }

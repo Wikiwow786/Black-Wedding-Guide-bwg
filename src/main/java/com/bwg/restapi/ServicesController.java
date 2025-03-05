@@ -1,6 +1,8 @@
 package com.bwg.restapi;
 
+import com.bwg.model.AuthModel;
 import com.bwg.model.ServicesModel;
+import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.ServicesService;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +35,20 @@ public class ServicesController {
 
     @PreAuthorize("hasAuthority('ROLE_VENDOR')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServicesModel> createService(@RequestBody ServicesModel servicesModel) {
+    public ResponseEntity<ServicesModel> createService(@RequestBody ServicesModel servicesModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new ServicesModel(servicesService.createService(servicesModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR_OWNER')")
     @PutMapping(value = "/{serviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServicesModel> updateService(@PathVariable(value = "serviceId") final Long serviceId,
-                                                       @RequestBody ServicesModel servicesModel) {
+                                                       @RequestBody ServicesModel servicesModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new ServicesModel(servicesService.updateService(serviceId, servicesModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR_OWNER')")
     @DeleteMapping(value = "/{serviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteService(@PathVariable(value = "serviceId") final Long serviceId) {
+    public ResponseEntity<Void> deleteService(@PathVariable(value = "serviceId") final Long serviceId,@AuthPrincipal AuthModel authModel) {
         servicesService.deleteService(serviceId);
         return ResponseEntity.ok().build();
     }

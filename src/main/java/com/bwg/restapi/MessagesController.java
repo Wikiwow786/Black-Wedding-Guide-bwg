@@ -1,6 +1,8 @@
 package com.bwg.restapi;
 
+import com.bwg.model.AuthModel;
 import com.bwg.model.MessagesModel;
+import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.MessagesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,19 +21,19 @@ public class MessagesController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MessagesModel>> getAllMessages() {
+    public ResponseEntity<List<MessagesModel>> getAllMessages(@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(messagesService.getAllMessages().stream().map(MessagesModel::new).toList());
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel) {
+    public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new MessagesModel(messagesService.createMessage(messagesModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(value = "/conversation/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MessagesModel>> getAllMessagesByUserId(@PathVariable(value = "userId") final Long userId) {
+    public ResponseEntity<List<MessagesModel>> getAllMessagesByUserId(@PathVariable(value = "userId") final Long userId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(messagesService.getAllMessagesByUserId(userId).stream().map(MessagesModel::new).toList());
     }
 }

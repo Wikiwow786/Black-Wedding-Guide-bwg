@@ -1,6 +1,8 @@
 package com.bwg.restapi;
 
+import com.bwg.model.AuthModel;
 import com.bwg.model.PaymentsModel;
+import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.PaymentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,26 +21,26 @@ public class PaymentsController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PaymentsModel>> getAllPayments() {
+    public ResponseEntity<List<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(paymentsService.getAllPayments().stream().map(PaymentsModel::new).toList());
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PaymentsModel> getPaymentsById(@PathVariable(value = "paymentId") final Long paymentId) {
+    public ResponseEntity<PaymentsModel> getPaymentsById(@PathVariable(value = "paymentId") final Long paymentId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new PaymentsModel(paymentsService.getPaymentById(paymentId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PaymentsModel> createPayment(@RequestBody PaymentsModel paymentsModel) {
+    public ResponseEntity<PaymentsModel> createPayment(@RequestBody PaymentsModel paymentsModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new PaymentsModel(paymentsService.createPayment(paymentsModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentsModel> updatePayment(@PathVariable(value = "paymentId") final Long paymentId,
-                                                       @RequestBody PaymentsModel paymentsModel) {
+                                                       @RequestBody PaymentsModel paymentsModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new PaymentsModel(paymentsService.updatePayment(paymentId, paymentsModel)));
     }
 }

@@ -2,6 +2,7 @@ package com.bwg.model;
 
 import com.bwg.domain.*;
 import com.bwg.domain.Users.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.util.ObjectUtils;
@@ -21,7 +22,9 @@ public class UsersModel {
     private UserRole role;
     private String phoneNumber;
     private String profilePhotoUrl;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime updatedAt;
     private Long vendorId;
     private List<BookingsModel> bookingsModel;

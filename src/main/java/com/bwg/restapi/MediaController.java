@@ -1,6 +1,8 @@
 package com.bwg.restapi;
 
+import com.bwg.model.AuthModel;
 import com.bwg.model.MediaModel;
+import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,25 +21,25 @@ public class MediaController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MediaModel>> getAllMedia() {
+    public ResponseEntity<List<MediaModel>> getAllMedia(@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(mediaService.getAllMedia().stream().map(MediaModel::new).toList());
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{mediaId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MediaModel> getMediaById(@PathVariable(value = "mediaId") final Long mediaId) {
+    public ResponseEntity<MediaModel> getMediaById(@PathVariable(value = "mediaId") final Long mediaId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new MediaModel(mediaService.getMedia(mediaId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MediaModel> createMedia(@RequestBody MediaModel mediaModel) {
+    public ResponseEntity<MediaModel> createMedia(@RequestBody MediaModel mediaModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new MediaModel(mediaService.createMedia(mediaModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @DeleteMapping(value = "/{mediaId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteMedia(@PathVariable(value = "mediaId") final Long mediaId) {
+    public ResponseEntity<Void> deleteMedia(@PathVariable(value = "mediaId") final Long mediaId,@AuthPrincipal AuthModel authModel) {
         mediaService.deleteMedia(mediaId);
         return ResponseEntity.ok().build();
     }

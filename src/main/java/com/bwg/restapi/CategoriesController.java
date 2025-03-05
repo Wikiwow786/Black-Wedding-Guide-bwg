@@ -1,6 +1,8 @@
 package com.bwg.restapi;
 
+import com.bwg.model.AuthModel;
 import com.bwg.model.CategoriesModel;
+import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.CategoriesService;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +34,19 @@ public class CategoriesController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoriesModel> createCategory(@RequestBody CategoriesModel categoriesModel) {
+    public ResponseEntity<CategoriesModel> createCategory(@RequestBody CategoriesModel categoriesModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new CategoriesModel(categoriesService.createCategory(categoriesModel)));
     }
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> updateCategory(@PathVariable(value = "categoryId") final Long categoryId,
-                                                          @RequestBody CategoriesModel categoriesModel) {
+                                                          @RequestBody CategoriesModel categoriesModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new CategoriesModel(categoriesService.updateCategory(categoryId, categoriesModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteCategory(@PathVariable(value = "categoryId") final Long categoryId) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable(value = "categoryId") final Long categoryId,@AuthPrincipal AuthModel authModel) {
         categoriesService.deleteCategory(categoryId);
         return ResponseEntity.ok().build();
     }

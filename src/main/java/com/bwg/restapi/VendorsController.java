@@ -1,6 +1,8 @@
 package com.bwg.restapi;
 
+import com.bwg.model.AuthModel;
 import com.bwg.model.VendorsModel;
+import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.VendorsService;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,20 +34,20 @@ public class VendorsController {
 
     @PreAuthorize("hasAuthority('ROLE_VENDOR')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VendorsModel> createVendor(@RequestBody VendorsModel vendorsModel) {
+    public ResponseEntity<VendorsModel> createVendor(@RequestBody VendorsModel vendorsModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new VendorsModel(vendorsService.createVendor(vendorsModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")
     @PutMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VendorsModel> updateVendor(@PathVariable(value = "vendorId") final Long vendorId,
-                                                     @RequestBody VendorsModel vendorsModel) {
+                                                     @RequestBody VendorsModel vendorsModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new VendorsModel(vendorsService.updateVendor(vendorId, vendorsModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")
     @DeleteMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteVendor(@PathVariable(value = "vendorId") final Long vendorId) {
+    public ResponseEntity<Void> deleteVendor(@PathVariable(value = "vendorId") final Long vendorId,@AuthPrincipal AuthModel authModel) {
         vendorsService.deleteVendor(vendorId);
         return ResponseEntity.ok().build();
     }
