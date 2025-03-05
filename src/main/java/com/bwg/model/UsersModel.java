@@ -17,7 +17,7 @@ public class UsersModel {
     private String firstName;
     private String lastName;
     private String email;
-    private String passwordHash;
+    private String password;
     private UserRole role;
     private String phoneNumber;
     private String profilePhotoUrl;
@@ -38,7 +38,7 @@ public class UsersModel {
         this.firstName = users.getFirstName();
         this.lastName = users.getLastName();
         this.email = users.getEmail();
-        this.passwordHash = users.getPasswordHash();
+        this.password = users.getPasswordHash();
         this.role = users.getRole();
         this.phoneNumber = users.getPhoneNumber();
         this.profilePhotoUrl = users.getProfilePhotoUrl();
@@ -88,12 +88,12 @@ public class UsersModel {
         this.email = email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public UserRole getRole() {

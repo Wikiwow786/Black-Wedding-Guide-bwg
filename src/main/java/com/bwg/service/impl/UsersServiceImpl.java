@@ -54,8 +54,9 @@ public class UsersServiceImpl implements UsersService {
         }
 
         BeanUtils.copyProperties(usersModel, users);
-
-        users.setPasswordHash(encodePassword(usersModel.getPasswordHash()));
+        if (usersModel.getPassword() != null && !usersModel.getPassword().isEmpty()) {
+            users.setPasswordHash(encodePassword(usersModel.getPassword()));
+        }
         users.setCreatedAt(OffsetDateTime.now());
         return usersRepository.save(users);
     }
