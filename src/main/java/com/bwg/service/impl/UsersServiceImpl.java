@@ -44,13 +44,20 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Users createUser(UsersModel usersModel) {
+    public Users createUser(UsersModel usersModel,AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating User..."), this);
 
         Users users = new Users();
 
-        if (null != usersRepository.findByEmailIgnoreCase(usersModel.getEmail())) {
+        if (null != usersRepository.findByEmailIgnoreCase(authModel.email())) {
             throw new ResourceAlreadyExistsException("User already exists");
+        }
+
+        if(usersModel.getFirstName() == null || usersModel.getLastName() == null || usersModel.getEmail() == null){
+            users = getUserById(Long.parseLong(authModel.userId()));
+            usersModel.setEmail(users.getEmail());
+            usersModel.setFirstName(users.getFirstName());
+            usersModel.setLastName(users.getLastName());
         }
 
         BeanUtils.copyProperties(usersModel, users);
@@ -79,7 +86,8 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public void deleteUser(Long userId) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete user information for userId {0} ", userId), this);
-        usersRepository.deleteById(userId);
+        Users users = getUserById(userId);
+        usersRepository.delete(users);
     }
 
     private String encodePassword(String password) {

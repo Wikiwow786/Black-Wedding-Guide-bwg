@@ -22,9 +22,7 @@ public class UsersModel {
     private UserRole role;
     private String phoneNumber;
     private String profilePhotoUrl;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime updatedAt;
     private Long vendorId;
     private List<BookingsModel> bookingsModel;

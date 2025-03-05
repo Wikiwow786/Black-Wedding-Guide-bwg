@@ -42,7 +42,8 @@ public class UsersController {
     @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@PathVariable(value = "userId") final Long userId,@AuthPrincipal AuthModel authModel) {
         usersService.deleteUser(userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+
     }
 
 }

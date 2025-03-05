@@ -83,9 +83,8 @@ public class VendorsServiceImpl implements VendorsService {
         info(LOG_SERVICE_OR_REPOSITORY, format("Attempting to delete Vendor Id {0} ", vendorId), this);
         var vendor = vendorsRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Not Found"));
-
         vendorsRepository.delete(vendor);
-        vendorsRepository.flush(); // Ensure the delete is flushed to the database
+        vendorsRepository.flush();
         info(LOG_SERVICE_OR_REPOSITORY, format("Deleted Vendor Id {0} successfully", vendorId), this);
     }
 }

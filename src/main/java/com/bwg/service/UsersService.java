@@ -11,7 +11,7 @@ public interface UsersService {
 
     Users getUserById(Long userId);
 
-    Users createUser(UsersModel usersModel);
+    Users createUser(UsersModel usersModel,AuthModel authModel);
 
     Users updateUser(Long userId, UsersModel usersModel);
 

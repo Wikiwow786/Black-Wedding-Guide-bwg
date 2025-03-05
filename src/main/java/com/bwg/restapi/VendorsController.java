@@ -49,6 +49,6 @@ public class VendorsController {
     @DeleteMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteVendor(@PathVariable(value = "vendorId") final Long vendorId,@AuthPrincipal AuthModel authModel) {
         vendorsService.deleteVendor(vendorId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

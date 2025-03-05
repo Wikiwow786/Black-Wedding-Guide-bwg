@@ -21,6 +21,6 @@ public class AuthenticationController {
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@RequestBody UsersModel usersModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new UsersModel(userService.createUser(usersModel)));
+        return ResponseEntity.ok(new UsersModel(userService.createUser(usersModel,authModel)));
     }
 }
