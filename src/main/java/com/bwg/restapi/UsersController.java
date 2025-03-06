@@ -6,6 +6,7 @@ import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.UsersService;
 import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,9 @@ public class UsersController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UsersModel>> getAllUsers(@AuthPrincipal AuthModel authModel, Pageable pageable) {
+    public ResponseEntity<Page<UsersModel>> getAllUsers(@AuthPrincipal AuthModel authModel, Pageable pageable) {
         CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(usersService.getAllUsers(pageable).stream().map(UsersModel::new).toList());
+        return ResponseEntity.ok(usersService.getAllUsers(pageable).map(UsersModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

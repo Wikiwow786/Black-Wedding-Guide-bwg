@@ -6,6 +6,7 @@ import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.MediaService;
 import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,9 @@ public class MediaController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MediaModel>> getAllMedia(@AuthPrincipal AuthModel authModel, Pageable pageable) {
+    public ResponseEntity<Page<MediaModel>> getAllMedia(@AuthPrincipal AuthModel authModel, Pageable pageable) {
         CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(mediaService.getAllMedia(pageable).stream().map(MediaModel::new).toList());
+        return ResponseEntity.ok(mediaService.getAllMedia(pageable).map(MediaModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

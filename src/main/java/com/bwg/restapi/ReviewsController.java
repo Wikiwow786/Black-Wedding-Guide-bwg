@@ -7,6 +7,7 @@ import com.bwg.service.ReviewsService;
 import com.bwg.util.CorrelationIdHolder;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,9 @@ public class ReviewsController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReviewsModel>> getAllReviews(Pageable pageable, @AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<Page<ReviewsModel>> getAllReviews(Pageable pageable, @AuthPrincipal AuthModel authModel) {
         CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(reviewsService.getAllReviews(pageable).stream().map(ReviewsModel::new).toList());
+        return ResponseEntity.ok(reviewsService.getAllReviews(pageable).map(ReviewsModel::new));
     }
 
     @PermitAll

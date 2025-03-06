@@ -6,6 +6,7 @@ import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.PaymentsService;
 import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,9 @@ public class PaymentsController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel, Pageable pageable) {
+    public ResponseEntity<Page<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel, Pageable pageable) {
         CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(paymentsService.getAllPayments(pageable).stream().map(PaymentsModel::new).toList());
+        return ResponseEntity.ok(paymentsService.getAllPayments(pageable).map(PaymentsModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

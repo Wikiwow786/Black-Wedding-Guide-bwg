@@ -6,6 +6,7 @@ import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.MessagesService;
 import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,9 @@ public class MessagesController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MessagesModel>> getAllMessages(Pageable pageable, @AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<Page<MessagesModel>> getAllMessages(Pageable pageable, @AuthPrincipal AuthModel authModel) {
         CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(messagesService.getAllMessages(pageable).stream().map(MessagesModel::new).toList());
+        return ResponseEntity.ok(messagesService.getAllMessages(pageable).map(MessagesModel::new));
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
