@@ -5,6 +5,7 @@ import com.bwg.domain.Payments.*;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.PaymentsRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
@@ -16,6 +17,7 @@ import java.time.OffsetDateTime;
 public class PaymentsModel {
 
     private Long paymentId;
+    @JsonIgnore
     private String uPaymentId;
     private Long bookingId;
     private Double amount;

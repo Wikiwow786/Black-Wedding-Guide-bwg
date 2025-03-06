@@ -3,6 +3,7 @@ package com.bwg.model;
 import com.bwg.domain.*;
 import com.bwg.domain.Users.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.util.ObjectUtils;
@@ -14,20 +15,28 @@ import java.util.List;
 public class UsersModel {
 
     private Long userId;
+    @JsonIgnore
     private String uUserId;
     private String firstName;
     private String lastName;
     private String email;
+    @JsonIgnore
     private String password;
     private UserRole role;
     private String phoneNumber;
     private String profilePhotoUrl;
     private OffsetDateTime createdAt;
+    @JsonIgnore
     private OffsetDateTime updatedAt;
+    @JsonIgnore
     private Long vendorId;
+    @JsonIgnore
     private List<BookingsModel> bookingsModel;
+    @JsonIgnore
     private List<ReviewsModel> reviewsModel;
+    @JsonIgnore
     private List<MessagesModel> sentMessagesModel;
+    @JsonIgnore
     private List<MessagesModel> receivedMessagesModel;
 
     public UsersModel() {

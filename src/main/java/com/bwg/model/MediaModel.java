@@ -5,6 +5,7 @@ import com.bwg.domain.Media;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.MediaRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
@@ -16,6 +17,7 @@ import java.time.OffsetDateTime;
 public class MediaModel {
 
     private Long mediaId;
+    @JsonIgnore
     private String uMediaId;
     private EntityType entityType;
     private Long entityId;
@@ -24,6 +26,7 @@ public class MediaModel {
     private String mimeType;
     private String title;
     private OffsetDateTime createdAt;
+    @JsonIgnore
     private OffsetDateTime updatedAt;
 
     public MediaModel() {

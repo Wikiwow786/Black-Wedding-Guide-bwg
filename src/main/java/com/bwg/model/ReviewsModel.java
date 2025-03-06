@@ -4,6 +4,7 @@ import com.bwg.domain.Reviews;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.ReviewsRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +16,7 @@ import java.time.OffsetDateTime;
 public class ReviewsModel {
 
     private Long reviewId;
+    @JsonIgnore
     private String uReviewId;
     private Long userId;
     private Long serviceId;

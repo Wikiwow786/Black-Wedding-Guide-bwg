@@ -4,6 +4,7 @@ import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ServicesModel {
 
     private Long serviceId;
+    @JsonIgnore
     private String uServiceId;
     private Long vendorId;
     private Long categoryId;
@@ -26,8 +28,11 @@ public class ServicesModel {
     private Double priceMax;
     private String availability;
     private OffsetDateTime createdAt;
+    @JsonIgnore
     private OffsetDateTime updatedAt;
+    @JsonIgnore
     private List<BookingsModel> bookingsModel;
+    @JsonIgnore
     private List<ReviewsModel> reviewsModel;
 
     public ServicesModel() {

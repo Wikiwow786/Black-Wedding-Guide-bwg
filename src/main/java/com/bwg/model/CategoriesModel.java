@@ -4,7 +4,9 @@ import com.bwg.domain.Categories;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.CategoriesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,13 @@ import java.util.stream.Collectors;
 public class CategoriesModel {
 
     private Long categoryId;
+    @JsonIgnore
     private String uCategoryId;
     private String categoryName;
     private OffsetDateTime createdAt;
+    @JsonIgnore
     private OffsetDateTime updatedAt;
+    @JsonIgnore
     private List<ServicesModel> servicesModel;
 
     public CategoriesModel() {

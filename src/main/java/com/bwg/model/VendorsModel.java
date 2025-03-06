@@ -4,6 +4,7 @@ import com.bwg.domain.Vendors;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.VendorsRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ import java.util.List;
 public class VendorsModel {
 
     private Long vendorId;
+    @JsonIgnore
     private String uVendorId;
     private Long userId;
     private String businessName;
@@ -25,7 +27,9 @@ public class VendorsModel {
     private Double rating;
     private Integer totalReviews;
     private OffsetDateTime createdAt;
+    @JsonIgnore
     private OffsetDateTime updatedAt;
+    @JsonIgnore
     private List<ServicesModel> servicesModels;
 
     public VendorsModel() {
