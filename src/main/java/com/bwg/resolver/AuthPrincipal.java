@@ -8,4 +8,6 @@ import java.lang.annotation.*;
 public @interface AuthPrincipal
 {
     String authorization() default "authorization";
+    String correlationId() default "correlationId";
 }
+

@@ -37,7 +37,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Users getUserById(Long userId) {
+    public Users getUserById(Long userId, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching User by Id {0}", userId);
         return usersRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -49,12 +49,15 @@ public class UsersServiceImpl implements UsersService {
 
         Users users = new Users();
 
-        if (null != usersRepository.findByEmailIgnoreCase(authModel.email())) {
+        if (null != usersRepository.findByEmailIgnoreCase(usersModel.getEmail())) {
             throw new ResourceAlreadyExistsException("User already exists");
         }
 
         if(usersModel.getFirstName() == null || usersModel.getLastName() == null || usersModel.getEmail() == null){
-            users = getUserById(Long.parseLong(authModel.userId()));
+            if (null != usersRepository.findByEmailIgnoreCase(authModel.email())) {
+                throw new ResourceAlreadyExistsException("User already exists");
+            }
+            users = getUserById(Long.parseLong(authModel.userId()), authModel);
             usersModel.setEmail(users.getEmail());
             usersModel.setFirstName(users.getFirstName());
             usersModel.setLastName(users.getLastName());
@@ -84,9 +87,9 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete user information for userId {0} ", userId), this);
-        Users users = getUserById(userId);
+        Users users = getUserById(userId, authModel);
         usersRepository.delete(users);
     }
 

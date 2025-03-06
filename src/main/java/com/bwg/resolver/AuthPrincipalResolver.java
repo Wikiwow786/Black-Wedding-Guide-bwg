@@ -1,8 +1,10 @@
 package com.bwg.resolver;
 
 import com.bwg.domain.Users;
+import com.bwg.exception.UnauthorizedException;
 import com.bwg.model.AuthModel;
 import com.bwg.repository.UsersRepository;
+import com.bwg.util.CorrelationIdHolder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +24,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.annotation.Native;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -53,12 +56,12 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
 
         String authorization = extractAuthorization(webRequest, parameter.getParameterAnnotation(AuthPrincipal.class));
-
+        String correlationId = retrieveCorrelationId(webRequest,parameter.getParameterAnnotation(AuthPrincipal.class));
         if (!StringUtils.hasText(authorization)) {
             return new AuthModel(null, null, null, null);
         }
 
-        AuthModel authModel = decodeToken(authorization);
+        AuthModel authModel = decodeToken(authorization,correlationId);
         return authenticateUser(authModel);
     }
 
@@ -72,7 +75,13 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
         return (StringUtils.hasText(token) && token.startsWith("Bearer ")) ? token.substring(7) : token;
     }
-    private AuthModel decodeToken(String token) {
+
+    private String retrieveCorrelationId(NativeWebRequest webRequest, AuthPrincipal annotation) {
+        String correlationId = (annotation.correlationId() != null) ? webRequest.getHeader(annotation.correlationId()) : null;
+        return (correlationId != null) ? correlationId : generateUuid();
+    }
+
+    private AuthModel decodeToken(String token,String correlationId) {
         try {
             PublicKey publicKey = getGooglePublicKey(token);
             Claims claims = Jwts.parser()
@@ -81,7 +90,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
                     .parseClaimsJws(token)
                     .getBody();
 
-            return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), null);
+            return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), correlationId);
         } catch (Exception e) {
             throw new RuntimeException("Invalid or expired token", e);
         }
@@ -125,6 +134,10 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
     private AuthModel authenticateUser(AuthModel authModel) {
         Users user = userRepository.findByEmailIgnoreCase(authModel.email());
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
+        if (user == null) {
+            throw new UnauthorizedException("Unauthorized.");
+        }
 
         if (user != null) {
             String role = "ROLE_" + user.getRole().name().toUpperCase();
@@ -134,7 +147,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
                     new UsernamePasswordAuthenticationToken(authModel, null, authorities)
             );
 
-            return new AuthModel(authModel.authorization(), authModel.userId(), authModel.email(), generateUuid());
+            return new AuthModel(authModel.authorization(), authModel.userId(), authModel.email(), authModel.correlationId());
         }
         return authModel;
     }
