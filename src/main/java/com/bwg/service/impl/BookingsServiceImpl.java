@@ -9,6 +9,8 @@ import com.bwg.repository.UsersRepository;
 import com.bwg.service.BookingsService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +35,9 @@ public class BookingsServiceImpl implements BookingsService {
     private ServicesRepository servicesRepository;
 
     @Override
-    public List<Bookings> getAllBookings() {
+    public Page<Bookings> getAllBookings(Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
-        return bookingsRepository.findAll();
+        return bookingsRepository.findAll(pageable);
     }
 
     @Override

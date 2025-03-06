@@ -10,6 +10,8 @@ import com.bwg.repository.UsersRepository;
 import com.bwg.service.ReviewsService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +36,9 @@ public class ReviewsServiceImpl implements ReviewsService {
     private ServicesRepository servicesRepository;
 
     @Override
-    public List<Reviews> getAllReviews() {
+    public Page<Reviews> getAllReviews(Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Reviews", this);
-        return reviewsRepository.findAll();
+        return reviewsRepository.findAll(pageable);
     }
 
     @Override

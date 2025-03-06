@@ -4,7 +4,9 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.MessagesModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.MessagesService;
+import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,19 +23,22 @@ public class MessagesController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MessagesModel>> getAllMessages(@AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(messagesService.getAllMessages().stream().map(MessagesModel::new).toList());
+    public ResponseEntity<List<MessagesModel>> getAllMessages(Pageable pageable, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
+        return ResponseEntity.ok(messagesService.getAllMessages(pageable).stream().map(MessagesModel::new).toList());
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new MessagesModel(messagesService.createMessage(messagesModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(value = "/conversation/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MessagesModel>> getAllMessagesByUserId(@PathVariable(value = "userId") final Long userId,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<List<MessagesModel>> getAllMessagesByUserId(@PathVariable(value = "userId") final Long userId, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(messagesService.getAllMessagesByUserId(userId).stream().map(MessagesModel::new).toList());
     }
 }

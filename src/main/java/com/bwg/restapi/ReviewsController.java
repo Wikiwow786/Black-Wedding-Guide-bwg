@@ -4,8 +4,10 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.ReviewsModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.ReviewsService;
+import com.bwg.util.CorrelationIdHolder;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,32 +24,37 @@ public class ReviewsController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReviewsModel>> getAllReviews() {
-        return ResponseEntity.ok(reviewsService.getAllReviews().stream().map(ReviewsModel::new).toList());
+    public ResponseEntity<List<ReviewsModel>> getAllReviews(Pageable pageable, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
+        return ResponseEntity.ok(reviewsService.getAllReviews(pageable).stream().map(ReviewsModel::new).toList());
     }
 
     @PermitAll
     @GetMapping(value = "/{reviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReviewsModel> getReviewsById(@PathVariable(value = "reviewId") final Long reviewId) {
+    public ResponseEntity<ReviewsModel> getReviewsById(@PathVariable(value = "reviewId") final Long reviewId, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new ReviewsModel(reviewsService.getReviewById(reviewId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_COUPLE')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReviewsModel> createReview(@RequestBody ReviewsModel reviewsModel,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<ReviewsModel> createReview(@RequestBody ReviewsModel reviewsModel, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new ReviewsModel(reviewsService.createReview(reviewsModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_VENDOR')")
     @PutMapping(value = "/{reviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReviewsModel> updateReview(@PathVariable(value = "reviewId") final Long reviewId,
-                                                     @RequestBody ReviewsModel reviewsModel,@AuthPrincipal AuthModel authModel) {
+                                                     @RequestBody ReviewsModel reviewsModel, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new ReviewsModel(reviewsService.updateReview(reviewId, reviewsModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_VENDOR')")
     @DeleteMapping(value = "/{reviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteReview(@PathVariable(value = "reviewId") final Long reviewId,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<Void> deleteReview(@PathVariable(value = "reviewId") final Long reviewId, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         reviewsService.deleteReview(reviewId);
         return ResponseEntity.ok().build();
     }

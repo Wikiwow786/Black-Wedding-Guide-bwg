@@ -7,6 +7,8 @@ import com.bwg.repository.CategoriesRepository;
 import com.bwg.service.CategoriesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +27,9 @@ public class CategoriesServiceImpl implements CategoriesService {
     private CategoriesRepository categoriesRepository;
 
     @Override
-    public List<Categories> getAllCategories() {
+    public Page<Categories> getAllCategories(Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Categories", this);
-        return categoriesRepository.findAll();
+        return categoriesRepository.findAll(pageable);
     }
 
     @Override

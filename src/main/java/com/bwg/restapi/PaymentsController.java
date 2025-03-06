@@ -4,7 +4,9 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.PaymentsModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.PaymentsService;
+import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,26 +23,30 @@ public class PaymentsController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(paymentsService.getAllPayments().stream().map(PaymentsModel::new).toList());
+    public ResponseEntity<List<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel, Pageable pageable) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
+        return ResponseEntity.ok(paymentsService.getAllPayments(pageable).stream().map(PaymentsModel::new).toList());
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PaymentsModel> getPaymentsById(@PathVariable(value = "paymentId") final Long paymentId,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<PaymentsModel> getPaymentsById(@PathVariable(value = "paymentId") final Long paymentId, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new PaymentsModel(paymentsService.getPaymentById(paymentId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PaymentsModel> createPayment(@RequestBody PaymentsModel paymentsModel,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<PaymentsModel> createPayment(@RequestBody PaymentsModel paymentsModel, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new PaymentsModel(paymentsService.createPayment(paymentsModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentsModel> updatePayment(@PathVariable(value = "paymentId") final Long paymentId,
-                                                       @RequestBody PaymentsModel paymentsModel,@AuthPrincipal AuthModel authModel) {
+                                                       @RequestBody PaymentsModel paymentsModel, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new PaymentsModel(paymentsService.updatePayment(paymentId, paymentsModel)));
     }
 }

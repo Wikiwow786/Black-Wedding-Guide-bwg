@@ -7,6 +7,8 @@ import com.bwg.repository.MediaRepository;
 import com.bwg.service.MediaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +26,9 @@ public class MediaServiceImpl implements MediaService {
     private MediaRepository mediaRepository;
 
     @Override
-    public List<Media> getAllMedia() {
+    public Page<Media> getAllMedia(Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Media", this);
-        return mediaRepository.findAll();
+        return mediaRepository.findAll(pageable);
     }
 
     @Override

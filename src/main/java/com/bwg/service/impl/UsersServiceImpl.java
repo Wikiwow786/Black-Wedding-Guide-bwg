@@ -11,6 +11,8 @@ import com.bwg.service.UsersService;
 import com.bwg.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,9 +33,9 @@ public class UsersServiceImpl implements UsersService {
     private UsersRepository usersRepository;
 
     @Override
-    public List<Users> getAllUsers() {
+    public Page<Users> getAllUsers(Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
-        return usersRepository.findAll();
+        return usersRepository.findAll(pageable);
     }
 
     @Override

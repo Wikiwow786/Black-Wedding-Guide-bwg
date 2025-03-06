@@ -4,6 +4,7 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.UsersModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.UsersService;
+import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@RequestBody UsersModel usersModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new UsersModel(userService.createUser(usersModel,authModel)));
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
+        return ResponseEntity.ok(new UsersModel(userService.createUser(usersModel, authModel)));
     }
 }

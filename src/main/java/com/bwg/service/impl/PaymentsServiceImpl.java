@@ -8,6 +8,8 @@ import com.bwg.repository.PaymentsRepository;
 import com.bwg.service.PaymentsService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +31,9 @@ public class PaymentsServiceImpl implements PaymentsService {
     private BookingsRepository bookingsRepository;
 
     @Override
-    public List<Payments> getAllPayments() {
+    public Page<Payments> getAllPayments(Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Payments", this);
-        return paymentsRepository.findAll();
+        return paymentsRepository.findAll(pageable);
     }
 
     @Override

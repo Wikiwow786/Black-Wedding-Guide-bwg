@@ -4,8 +4,10 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.CategoriesModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.CategoriesService;
+import com.bwg.util.CorrelationIdHolder;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,31 +24,37 @@ public class CategoriesController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CategoriesModel>> getAllCategories() {
-        return ResponseEntity.ok(categoriesService.getAllCategories().stream().map(CategoriesModel::new).toList());
+    public ResponseEntity<List<CategoriesModel>> getAllCategories(@AuthPrincipal AuthModel authModel, Pageable pageable) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
+        return ResponseEntity.ok(categoriesService.getAllCategories(pageable).stream().map(CategoriesModel::new).toList());
     }
 
     @PermitAll
     @GetMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoriesModel> getCategoriesById(@PathVariable(value = "categoryId") final Long categoryId) {
+    public ResponseEntity<CategoriesModel> getCategoriesById(@PathVariable(value = "categoryId") final Long categoryId, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new CategoriesModel(categoriesService.getCategoryById(categoryId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoriesModel> createCategory(@RequestBody CategoriesModel categoriesModel,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<CategoriesModel> createCategory(@RequestBody CategoriesModel categoriesModel, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new CategoriesModel(categoriesService.createCategory(categoriesModel)));
     }
+
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> updateCategory(@PathVariable(value = "categoryId") final Long categoryId,
-                                                          @RequestBody CategoriesModel categoriesModel,@AuthPrincipal AuthModel authModel) {
+                                                          @RequestBody CategoriesModel categoriesModel, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new CategoriesModel(categoriesService.updateCategory(categoryId, categoriesModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteCategory(@PathVariable(value = "categoryId") final Long categoryId,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable(value = "categoryId") final Long categoryId, @AuthPrincipal AuthModel authModel) {
+        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         categoriesService.deleteCategory(categoryId);
         return ResponseEntity.ok().build();
     }

@@ -1,12 +1,15 @@
 package com.bwg.service;
 
 import com.bwg.domain.Categories;
+import com.bwg.domain.Media;
 import com.bwg.model.CategoriesModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface CategoriesService {
-    List<Categories> getAllCategories();
+    Page<Categories> getAllCategories(Pageable pageable);
 
     Categories getCategoryById(Long categoryId);
 

@@ -9,6 +9,8 @@ import com.bwg.repository.UsersRepository;
 import com.bwg.service.MessagesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -28,9 +30,9 @@ public class MessagesServiceImpl implements MessagesService {
     private UsersRepository usersRepository;
 
     @Override
-    public List<Messages> getAllMessages() {
+    public Page<Messages> getAllMessages(Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Messages", this);
-        return messagesRepository.findAll();
+        return messagesRepository.findAll(pageable);
     }
 
     @Override
