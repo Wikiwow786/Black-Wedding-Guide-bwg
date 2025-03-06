@@ -25,19 +25,19 @@ public class MediaController {
         return ResponseEntity.ok(mediaService.getAllMedia().stream().map(MediaModel::new).toList());
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{mediaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MediaModel> getMediaById(@PathVariable(value = "mediaId") final Long mediaId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new MediaModel(mediaService.getMedia(mediaId)));
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MediaModel> createMedia(@RequestBody MediaModel mediaModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new MediaModel(mediaService.createMedia(mediaModel)));
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @DeleteMapping(value = "/{mediaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteMedia(@PathVariable(value = "mediaId") final Long mediaId,@AuthPrincipal AuthModel authModel) {
         mediaService.deleteMedia(mediaId);

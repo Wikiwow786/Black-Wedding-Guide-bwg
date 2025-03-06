@@ -19,13 +19,13 @@ public class PaymentsController {
     @Autowired
     private PaymentsService paymentsService;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(paymentsService.getAllPayments().stream().map(PaymentsModel::new).toList());
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentsModel> getPaymentsById(@PathVariable(value = "paymentId") final Long paymentId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new PaymentsModel(paymentsService.getPaymentById(paymentId)));
