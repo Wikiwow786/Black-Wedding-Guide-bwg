@@ -92,7 +92,8 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
             return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), correlationId);
         } catch (Exception e) {
-            throw new RuntimeException("Invalid or expired token", e);
+            CorrelationIdHolder.setCorrelationId(correlationId);
+            throw new UnauthorizedException("Invalid or expired token");
         }
     }
 

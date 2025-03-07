@@ -26,22 +26,19 @@ public class CategoriesController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<CategoriesModel>> getAllCategories(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(categoriesService.getAllCategories(pageable).map(CategoriesModel::new));
+    public ResponseEntity<Page<CategoriesModel>> getAllCategories(@RequestParam(required = false) String search,@AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(categoriesService.getAllCategories(search,pageable).map(CategoriesModel::new));
     }
 
     @PermitAll
     @GetMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> getCategoriesById(@PathVariable(value = "categoryId") final Long categoryId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new CategoriesModel(categoriesService.getCategoryById(categoryId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> createCategory(@RequestBody CategoriesModel categoriesModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new CategoriesModel(categoriesService.createCategory(categoriesModel)));
     }
 
@@ -49,14 +46,12 @@ public class CategoriesController {
     @PutMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> updateCategory(@PathVariable(value = "categoryId") final Long categoryId,
                                                           @RequestBody CategoriesModel categoriesModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new CategoriesModel(categoriesService.updateCategory(categoryId, categoriesModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteCategory(@PathVariable(value = "categoryId") final Long categoryId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         categoriesService.deleteCategory(categoryId);
         return ResponseEntity.ok().build();
     }

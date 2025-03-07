@@ -1,19 +1,20 @@
 package com.bwg.service.impl;
 
+import com.bwg.domain.QVendors;
 import com.bwg.domain.Vendors;
 import com.bwg.exception.ResourceAlreadyExistsException;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.VendorsModel;
-import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.repository.VendorsRepository;
 import com.bwg.service.VendorsService;
+import com.querydsl.core.BooleanBuilder;
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -32,8 +33,12 @@ public class VendorsServiceImpl implements VendorsService {
     private UsersRepository usersRepository;
 
     @Override
-    public Page<Vendors> getAllVendors(Pageable pageable) {
+    public Page<Vendors> getAllVendors(String search,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Vendors", this);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QVendors.vendors.location.containsIgnoreCase(search));
+        }
         return vendorsRepository.findAll(pageable);
     }
 

@@ -25,21 +25,18 @@ public class MessagesController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<MessagesModel>> getAllMessages(Pageable pageable, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(messagesService.getAllMessages(pageable).map(MessagesModel::new));
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new MessagesModel(messagesService.createMessage(messagesModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(value = "/conversation/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MessagesModel>> getAllMessagesByUserId(@PathVariable(value = "userId") final Long userId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(messagesService.getAllMessagesByUserId(userId).stream().map(MessagesModel::new).toList());
     }
 }

@@ -22,7 +22,6 @@ public class AuthenticationController {
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@RequestBody UsersModel usersModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new UsersModel(userService.createUser(usersModel, authModel)));
     }
 }

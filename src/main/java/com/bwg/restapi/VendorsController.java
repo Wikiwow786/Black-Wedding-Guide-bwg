@@ -23,22 +23,19 @@ public class VendorsController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<VendorsModel>> getAllVendors(Pageable pageable, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(vendorsService.getAllVendors(pageable).map(VendorsModel::new));
+    public ResponseEntity<Page<VendorsModel>> getAllVendors(@RequestParam(required = false)String search, @AuthPrincipal AuthModel authModel,Pageable pageable) {
+        return ResponseEntity.ok(vendorsService.getAllVendors(search,pageable).map(VendorsModel::new));
     }
 
     @PermitAll
     @GetMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VendorsModel> getVendorsById(@PathVariable(value = "vendorId") final Long vendorId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new VendorsModel(vendorsService.getVendorById(vendorId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_VENDOR')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VendorsModel> createVendor(@RequestBody VendorsModel vendorsModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new VendorsModel(vendorsService.createVendor(vendorsModel)));
     }
 
@@ -46,14 +43,12 @@ public class VendorsController {
     @PutMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VendorsModel> updateVendor(@PathVariable(value = "vendorId") final Long vendorId,
                                                      @RequestBody VendorsModel vendorsModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new VendorsModel(vendorsService.updateVendor(vendorId, vendorsModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")
     @DeleteMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteVendor(@PathVariable(value = "vendorId") final Long vendorId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         vendorsService.deleteVendor(vendorId);
         return ResponseEntity.noContent().build();
     }

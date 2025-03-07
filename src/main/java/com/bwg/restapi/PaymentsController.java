@@ -25,21 +25,18 @@ public class PaymentsController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(paymentsService.getAllPayments(pageable).map(PaymentsModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentsModel> getPaymentsById(@PathVariable(value = "paymentId") final Long paymentId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new PaymentsModel(paymentsService.getPaymentById(paymentId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentsModel> createPayment(@RequestBody PaymentsModel paymentsModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new PaymentsModel(paymentsService.createPayment(paymentsModel)));
     }
 
@@ -47,7 +44,6 @@ public class PaymentsController {
     @PutMapping(value = "/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentsModel> updatePayment(@PathVariable(value = "paymentId") final Long paymentId,
                                                        @RequestBody PaymentsModel paymentsModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new PaymentsModel(paymentsService.updatePayment(paymentId, paymentsModel)));
     }
 }

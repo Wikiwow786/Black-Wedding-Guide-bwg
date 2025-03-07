@@ -25,7 +25,6 @@ public class MediaController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<MediaModel>> getAllMedia(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(mediaService.getAllMedia(pageable).map(MediaModel::new));
     }
 

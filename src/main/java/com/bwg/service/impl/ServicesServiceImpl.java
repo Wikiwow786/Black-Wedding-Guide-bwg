@@ -1,6 +1,7 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Categories;
+import com.bwg.domain.QServices;
 import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.ServicesModel;
@@ -8,6 +9,8 @@ import com.bwg.repository.CategoriesRepository;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.VendorsRepository;
 import com.bwg.service.ServicesService;
+import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,9 +36,19 @@ public class ServicesServiceImpl implements ServicesService {
     private CategoriesRepository categoriesRepository;
 
     @Override
-    public Page<Services> getAllServices(Pageable pageable) {
+    public Page<Services> getAllServices(String search,Double priceStart,Double priceEnd,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
-        return servicesRepository.findAll(pageable);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QServices.services.serviceName.containsIgnoreCase(search));
+        }
+        if(priceStart != null){
+            filter.and(QServices.services.priceMin.goe(priceStart));
+        }
+        if(priceEnd != null){
+            filter.and(QServices.services.priceMax.loe(priceEnd));
+        }
+        return servicesRepository.findAll(filter,pageable);
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface VendorsService {
-    Page<Vendors> getAllVendors(Pageable pageable);
+    Page<Vendors> getAllVendors(String search,Pageable pageable);
 
     Vendors getVendorById(Long vendorId);
 

@@ -24,22 +24,19 @@ public class ServicesController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<ServicesModel>> getAllServices(Pageable pageable, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
-        return ResponseEntity.ok(servicesService.getAllServices(pageable).map(ServicesModel::new));
+    public ResponseEntity<Page<ServicesModel>> getAllServices(@RequestParam(required = false)String search,@RequestParam(required = false)Double priceStart,@RequestParam(required = false)Double priceEnd,@AuthPrincipal AuthModel authModel,Pageable pageable) {
+        return ResponseEntity.ok(servicesService.getAllServices(search,priceStart,priceEnd,pageable).map(ServicesModel::new));
     }
 
     @PermitAll
     @GetMapping(value = "/{serviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServicesModel> getServicesById(@PathVariable(value = "serviceId") final Long serviceId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new ServicesModel(servicesService.getServiceById(serviceId)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_VENDOR')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServicesModel> createService(@RequestBody ServicesModel servicesModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new ServicesModel(servicesService.createService(servicesModel)));
     }
 
@@ -47,14 +44,12 @@ public class ServicesController {
     @PutMapping(value = "/{serviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServicesModel> updateService(@PathVariable(value = "serviceId") final Long serviceId,
                                                        @RequestBody ServicesModel servicesModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new ServicesModel(servicesService.updateService(serviceId, servicesModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR_OWNER')")
     @DeleteMapping(value = "/{serviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteService(@PathVariable(value = "serviceId") final Long serviceId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         servicesService.deleteService(serviceId);
         return ResponseEntity.ok().build();
     }

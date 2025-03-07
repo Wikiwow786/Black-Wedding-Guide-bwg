@@ -2,8 +2,9 @@ package com.bwg.repository;
 
 import com.bwg.domain.Services;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ServicesRepository extends JpaRepository<Services, Long> {
+public interface ServicesRepository extends JpaRepository<Services, Long>, QuerydslPredicateExecutor<Services> {
 }

@@ -25,14 +25,12 @@ public class UsersController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<UsersModel>> getAllUsers(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(usersService.getAllUsers(pageable).map(UsersModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> getUserById(@PathVariable(value = "userId") final Long userId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new UsersModel(usersService.getUserById(userId, authModel)));
     }
 
@@ -40,14 +38,12 @@ public class UsersController {
     @PutMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@PathVariable(value = "userId") final Long userId,
                                              @RequestBody UsersModel usersModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new UsersModel(usersService.updateUser(userId, usersModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@PathVariable(value = "userId") final Long userId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         usersService.deleteUser(userId, authModel);
         return ResponseEntity.noContent().build();
 

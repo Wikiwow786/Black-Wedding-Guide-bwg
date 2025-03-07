@@ -1,10 +1,13 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Categories;
+import com.bwg.domain.QCategories;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.CategoriesModel;
 import com.bwg.repository.CategoriesRepository;
 import com.bwg.service.CategoriesService;
+import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,9 +30,13 @@ public class CategoriesServiceImpl implements CategoriesService {
     private CategoriesRepository categoriesRepository;
 
     @Override
-    public Page<Categories> getAllCategories(Pageable pageable) {
+    public Page<Categories> getAllCategories(String search,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Categories", this);
-        return categoriesRepository.findAll(pageable);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QCategories.categories.categoryName.containsIgnoreCase(search));
+        }
+        return categoriesRepository.findAll(filter,pageable);
     }
 
     @Override

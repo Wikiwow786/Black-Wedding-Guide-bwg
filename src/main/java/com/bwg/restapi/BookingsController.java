@@ -25,14 +25,12 @@ public class BookingsController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<BookingsModel>> getAllBookings(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(bookingsService.getAllBookings(pageable).map(BookingsModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
     @GetMapping(value = "/{bookingId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookingsModel> getBookingsById(@PathVariable(value = "bookingId") final Long bookingId, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new BookingsModel(bookingsService.getBookingById(bookingId)));
     }
 
@@ -40,7 +38,6 @@ public class BookingsController {
     @PreAuthorize("hasAuthority('ROLE_COUPLE')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookingsModel> createBooking(@RequestBody BookingsModel bookingsModel, @AuthPrincipal AuthModel authModel) {
-        CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         return ResponseEntity.ok(new BookingsModel(bookingsService.createBooking(bookingsModel)));
     }
 
