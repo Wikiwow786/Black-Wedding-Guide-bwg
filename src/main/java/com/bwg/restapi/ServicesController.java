@@ -28,7 +28,6 @@ public class ServicesController {
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<ServicesModel>> getAllServices(@RequestParam(required = false)String search,@RequestParam(required = false)Double priceStart,@RequestParam(required = false)Double priceEnd,@AuthPrincipal AuthModel authModel,Pageable pageable) {
-        info(LOG_SERVICE_OR_REPOSITORY, "Received search param through gateway",search);
         return ResponseEntity.ok(servicesService.getAllServices(search,priceStart,priceEnd,pageable).map(ServicesModel::new));
     }
 
