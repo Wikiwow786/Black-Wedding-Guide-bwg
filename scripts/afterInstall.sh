@@ -9,6 +9,7 @@ if sudo service "$SERVICE" status > /dev/null 2>&1; then
 else
   echo "Service $SERVICE does not exist."
   sudo chmod o+x /opt/bwg-service/bwg-service.jar
+  sudo chmod o+x /opt/bwg-service/logs
   sudo ln -s /opt/bwg-service/bwg-service.jar /etc/init.d/bwg-service
   sudo ln -s /etc/init.d/bwg-service /etc/rc.d/bwg-service
   sudo chkconfig --add bwg-service
