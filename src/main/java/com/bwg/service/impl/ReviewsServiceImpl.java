@@ -1,10 +1,12 @@
 package com.bwg.service.impl;
 
+import com.bwg.domain.Bookings;
 import com.bwg.domain.Messages;
 import com.bwg.domain.QReviews;
 import com.bwg.domain.Reviews;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.ReviewsModel;
+import com.bwg.repository.BookingsRepository;
 import com.bwg.repository.ReviewsRepository;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.UsersRepository;
@@ -37,6 +39,9 @@ public class ReviewsServiceImpl implements ReviewsService {
     @Autowired
     private ServicesRepository servicesRepository;
 
+    @Autowired
+    private BookingsRepository bookingsRepository;
+
     @Override
     public Page<Reviews> getAllReviews(Integer rating,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Reviews", this);
@@ -60,14 +65,20 @@ public class ReviewsServiceImpl implements ReviewsService {
 
         Reviews reviews = new Reviews();
 
-        BeanUtils.copyProperties(reviewsModel, reviews);
-        reviews.setUser(usersRepository.findById(reviewsModel.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found")));
-        reviews.setService(servicesRepository.findById(reviewsModel.getServiceId())
-                .orElseThrow(() -> new ResourceNotFoundException("Service not found")));
+        var booking = bookingsRepository.findByUser_UserId(reviewsModel.getUserId());
 
-        reviews.setCreatedAt(OffsetDateTime.now());
-        return reviewsRepository.save(reviews);
+        if (booking != null && booking.getStatus().equals(Bookings.BookingStatus.completed)){
+            BeanUtils.copyProperties(reviewsModel, reviews);
+            reviews.setUser(usersRepository.findById(reviewsModel.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found")));
+            reviews.setService(servicesRepository.findById(reviewsModel.getServiceId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Service not found")));
+
+            reviews.setCreatedAt(OffsetDateTime.now());
+            return reviewsRepository.save(reviews);
+        }else{
+            throw new ResourceNotFoundException("Booking not found or not completed");
+        }
     }
 
     @Override
