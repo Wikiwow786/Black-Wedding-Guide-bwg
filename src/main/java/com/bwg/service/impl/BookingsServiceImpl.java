@@ -40,14 +40,16 @@ public class BookingsServiceImpl implements BookingsService {
     public Page<Bookings> getAllBookings(String search,Bookings.BookingStatus status,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
         BooleanBuilder filter = new BooleanBuilder();
-        if(StringUtils.isNotBlank(search)){
-            filter.and(QBookings.bookings.user.firstName.containsIgnoreCase(search))
-                    .or(QBookings.bookings.user.lastName.containsIgnoreCase(search));
+        if (StringUtils.isNotBlank(search)) {
+             filter.and(
+                    QBookings.bookings.user.firstName.containsIgnoreCase(search)
+                            .or(QBookings.bookings.user.lastName.containsIgnoreCase(search))
+            );
         }
         if(status != null){
             filter.and(QBookings.bookings.status.eq(status));
         }
-        return bookingsRepository.findAll(pageable);
+        return bookingsRepository.findAll(filter,pageable);
     }
 
     @Override
