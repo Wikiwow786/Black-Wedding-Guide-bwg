@@ -17,7 +17,7 @@
     <logger name="org.springframework.data.jpa.repository.query" level="WARN"/>
     <logger name="org.springframework.core.env" level="WARN"/>
 
-
+    <!-- Console Appender -->
     <appender name="Console"
               class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -27,13 +27,12 @@
         </layout>
     </appender>
 
+    <!-- File Appender -->
     <appender name="FileAppender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/opt/bwg-service/logs/bwg-service.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- Daily rollover -->
             <fileNamePattern>/opt/bwg-service/logs/bwg-service.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- Keep logs for 30 days -->
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -41,7 +40,7 @@
         </encoder>
     </appender>
 
-    <!-- LOG everything at INFO level -->
+    <!-- Root Logger -->
     <root level="info">
         <appender-ref ref="Console" />
         <appender-ref ref="FileAppender" />
@@ -52,6 +51,5 @@
         <appender-ref ref="Console" />
         <appender-ref ref="FileAppender" />
     </logger>
-
 
 </configuration>
