@@ -1,11 +1,14 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Payments;
+import com.bwg.domain.QPayments;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.PaymentsModel;
 import com.bwg.repository.BookingsRepository;
 import com.bwg.repository.PaymentsRepository;
 import com.bwg.service.PaymentsService;
+import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 
 import static com.bwg.logger.Logger.format;
@@ -31,9 +33,13 @@ public class PaymentsServiceImpl implements PaymentsService {
     private BookingsRepository bookingsRepository;
 
     @Override
-    public Page<Payments> getAllPayments(Pageable pageable) {
+    public Page<Payments> getAllPayments(String search,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Payments", this);
-        return paymentsRepository.findAll(pageable);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QPayments.payments.currency.containsIgnoreCase(search));
+        }
+        return paymentsRepository.findAll(filter,pageable);
     }
 
     @Override

@@ -24,8 +24,8 @@ public class PaymentsController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<PaymentsModel>> getAllPayments(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(paymentsService.getAllPayments(pageable).map(PaymentsModel::new));
+    public ResponseEntity<Page<PaymentsModel>> getAllPayments(@RequestParam(required = false)String search,@AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(paymentsService.getAllPayments(search,pageable).map(PaymentsModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

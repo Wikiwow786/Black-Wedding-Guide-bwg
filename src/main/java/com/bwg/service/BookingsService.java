@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface BookingsService {
-    Page<Bookings> getAllBookings(Pageable pageable);
+    Page<Bookings> getAllBookings(String search, Bookings.BookingStatus status,Pageable pageable);
 
     Bookings getBookingById(Long bookingId);
 

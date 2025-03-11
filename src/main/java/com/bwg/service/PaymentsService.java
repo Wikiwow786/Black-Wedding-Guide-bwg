@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PaymentsService {
-    Page<Payments> getAllPayments(Pageable pageable);
+    Page<Payments> getAllPayments(String search,Pageable pageable);
 
     Payments getPaymentById(Long paymentId);
 

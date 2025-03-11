@@ -105,7 +105,6 @@ public class Payments {
         this.createdAt = createdAt;
     }
 
-    // Enum for PaymentStatus
     public enum PaymentStatus {
         initiated,
         successful,

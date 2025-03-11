@@ -1,6 +1,7 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Messages;
+import com.bwg.domain.QReviews;
 import com.bwg.domain.Reviews;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.ReviewsModel;
@@ -8,6 +9,7 @@ import com.bwg.repository.ReviewsRepository;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.ReviewsService;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,9 +38,13 @@ public class ReviewsServiceImpl implements ReviewsService {
     private ServicesRepository servicesRepository;
 
     @Override
-    public Page<Reviews> getAllReviews(Pageable pageable) {
+    public Page<Reviews> getAllReviews(Integer rating,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Reviews", this);
-        return reviewsRepository.findAll(pageable);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(rating != null){
+            filter.and(QReviews.reviews.rating.eq(rating));
+        }
+        return reviewsRepository.findAll(filter,pageable);
     }
 
     @Override

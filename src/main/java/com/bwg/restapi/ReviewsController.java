@@ -25,8 +25,8 @@ public class ReviewsController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<ReviewsModel>> getAllReviews(Pageable pageable, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(reviewsService.getAllReviews(pageable).map(ReviewsModel::new));
+    public ResponseEntity<Page<ReviewsModel>> getAllReviews(@RequestParam(required = false)Integer rating, Pageable pageable, @AuthPrincipal AuthModel authModel) {
+        return ResponseEntity.ok(reviewsService.getAllReviews(rating,pageable).map(ReviewsModel::new));
     }
 
     @PermitAll

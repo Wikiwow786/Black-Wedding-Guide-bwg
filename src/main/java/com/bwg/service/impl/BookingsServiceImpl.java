@@ -1,12 +1,15 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Bookings;
+import com.bwg.domain.QBookings;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.BookingsModel;
 import com.bwg.repository.BookingsRepository;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.BookingsService;
+import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 
 import static com.bwg.logger.Logger.format;
@@ -35,8 +37,16 @@ public class BookingsServiceImpl implements BookingsService {
     private ServicesRepository servicesRepository;
 
     @Override
-    public Page<Bookings> getAllBookings(Pageable pageable) {
+    public Page<Bookings> getAllBookings(String search,Bookings.BookingStatus status,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QBookings.bookings.user.firstName.containsIgnoreCase(search))
+                    .or(QBookings.bookings.user.lastName.containsIgnoreCase(search));
+        }
+        if(status != null){
+            filter.and(QBookings.bookings.status.eq(status));
+        }
         return bookingsRepository.findAll(pageable);
     }
 

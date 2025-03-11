@@ -1,17 +1,12 @@
 package com.bwg.model;
 
 import com.bwg.domain.Bookings;
-import com.bwg.domain.Services;
-import com.bwg.domain.Users;
-import com.bwg.exception.ResourceNotFoundException;
-import com.bwg.repository.BookingsRepository;
-import com.bwg.util.BeanUtil;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
+
 
 import java.time.OffsetDateTime;
 
@@ -24,6 +19,7 @@ public class BookingsModel {
     private Long userId;
     private String userName;
     private Long serviceId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime eventDate;
     private Bookings.BookingStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")

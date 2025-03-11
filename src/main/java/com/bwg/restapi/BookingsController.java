@@ -1,5 +1,6 @@
 package com.bwg.restapi;
 
+import com.bwg.domain.Bookings;
 import com.bwg.model.AuthModel;
 import com.bwg.model.BookingsModel;
 import com.bwg.resolver.AuthPrincipal;
@@ -23,8 +24,8 @@ public class BookingsController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<BookingsModel>> getAllBookings(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(bookingsService.getAllBookings(pageable).map(BookingsModel::new));
+    public ResponseEntity<Page<BookingsModel>> getAllBookings(@RequestParam(required = false)String search, @RequestParam(required = false) Bookings.BookingStatus status, @AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(bookingsService.getAllBookings(search,status,pageable).map(BookingsModel::new));
     }
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
     @GetMapping(value = "/{bookingId}", produces = MediaType.APPLICATION_JSON_VALUE)

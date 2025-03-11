@@ -1,6 +1,5 @@
 package com.bwg.service.impl;
 
-import com.bwg.domain.Categories;
 import com.bwg.domain.QServices;
 import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
@@ -15,7 +14,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;

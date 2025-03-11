@@ -39,7 +39,8 @@ public class VendorsServiceImpl implements VendorsService {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Vendors", this);
         BooleanBuilder filter = new BooleanBuilder();
         if(StringUtils.isNotBlank(search)){
-            filter.and(QVendors.vendors.location.containsIgnoreCase(search));
+            filter.and(QVendors.vendors.location.containsIgnoreCase(search)
+                    .or(QVendors.vendors.businessName.containsIgnoreCase(search)));
         }
         return vendorsRepository.findAll(filter, pageable).map(VendorsModel::new);
     }
