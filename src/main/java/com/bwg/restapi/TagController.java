@@ -21,6 +21,7 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PermitAll
     public ResponseEntity<Page<TagModel>> getAllTags(@RequestParam(required = false)String search, Pageable pageable) {
         return ResponseEntity.ok(tagService.getAllTags(search,pageable));
     }
