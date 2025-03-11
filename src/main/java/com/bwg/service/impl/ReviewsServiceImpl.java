@@ -65,7 +65,7 @@ public class ReviewsServiceImpl implements ReviewsService {
 
         Reviews reviews = new Reviews();
 
-        var booking = bookingsRepository.findByUser_UserId(reviewsModel.getUserId());
+        var booking = bookingsRepository.findByUser_UserIdAndService_ServiceId(reviewsModel.getUserId(), reviewsModel.getServiceId());
 
         if (booking != null && booking.getStatus().equals(Bookings.BookingStatus.completed)){
             BeanUtils.copyProperties(reviewsModel, reviews);

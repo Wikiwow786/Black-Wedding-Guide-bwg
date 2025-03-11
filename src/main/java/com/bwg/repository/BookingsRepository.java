@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface BookingsRepository extends JpaRepository<Bookings, Long>, QuerydslPredicateExecutor<Bookings> {
-    Bookings findByUser_UserId(Long userId);
+    Bookings findByUser_UserIdAndService_ServiceId(Long userId, Long serviceId);
 }
