@@ -28,28 +28,28 @@
     </appender>
 
     <!-- File Appender -->
-<!--    <appender name="FileAppender"-->
-<!--              class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-<!--        <file>/opt/bwg-service/logs/bwg-service.log</file>-->
-<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-<!--            <fileNamePattern>/opt/bwg-service/logs/bwg-service.%d{yyyy-MM-dd}.log</fileNamePattern>-->
-<!--            <maxHistory>30</maxHistory>-->
-<!--        </rollingPolicy>-->
-<!--        <encoder>-->
-<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
-<!--        </encoder>-->
-<!--    </appender>-->
+    <appender name="FileAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/opt/bwg-service/logs/bwg-service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/opt/bwg-service/logs/bwg-service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
     <!-- Root Logger -->
     <root level="info">
         <appender-ref ref="Console" />
-<!--        <appender-ref ref="FileAppender" />-->
+        <appender-ref ref="FileAppender" />
     </root>
 
     <!-- Logger for com.bwg -->
     <logger name="com.bwg" level="trace" additivity="false">
         <appender-ref ref="Console" />
-<!--        <appender-ref ref="FileAppender" />-->
+        <appender-ref ref="FileAppender" />
     </logger>
 
 </configuration>
