@@ -68,7 +68,7 @@ public class BookingsServiceImpl implements BookingsService {
 
         BeanUtils.copyProperties(bookingsModel, bookings);
 
-        bookings.setUser(usersRepository.findById(Long.parseLong(authModel.userId()))
+        bookings.setUser(usersRepository.findById(bookingsModel.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found")));
         bookings.setService(servicesRepository.findById(bookingsModel.getServiceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found")));
