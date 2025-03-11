@@ -3,6 +3,7 @@ package com.bwg.service.impl;
 import com.bwg.domain.Bookings;
 import com.bwg.domain.QBookings;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.model.AuthModel;
 import com.bwg.model.BookingsModel;
 import com.bwg.repository.BookingsRepository;
 import com.bwg.repository.ServicesRepository;
@@ -60,14 +61,14 @@ public class BookingsServiceImpl implements BookingsService {
     }
 
     @Override
-    public Bookings createBooking(BookingsModel bookingsModel) {
+    public Bookings createBooking(BookingsModel bookingsModel, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating Booking ..."), this);
 
         Bookings bookings = new Bookings();
 
         BeanUtils.copyProperties(bookingsModel, bookings);
 
-        bookings.setUser(usersRepository.findById(bookingsModel.getUserId())
+        bookings.setUser(usersRepository.findById(Long.parseLong(authModel.userId()))
                 .orElseThrow(() -> new ResourceNotFoundException("User not found")));
         bookings.setService(servicesRepository.findById(bookingsModel.getServiceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found")));

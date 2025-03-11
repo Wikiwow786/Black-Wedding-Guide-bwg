@@ -5,4 +5,9 @@ public record AuthModel(String authorization, String userId, String email, Strin
     public String correlationId() {
         return correlationId;
     }
+
+    @Override
+    public String userId() {
+        return userId;
+    }
 }
