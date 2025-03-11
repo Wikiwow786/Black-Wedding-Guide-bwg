@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -55,6 +56,15 @@ public class Services {
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
     private List<Reviews> reviews;
+
+    @ManyToMany
+    @JoinTable(
+            name = "service_tags",
+            schema = "bwg",
+            joinColumns = @JoinColumn(name = "service_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
 
     @PrePersist
     public void setUServiceId() {
@@ -159,5 +169,13 @@ public class Services {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }

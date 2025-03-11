@@ -1,9 +1,11 @@
 package com.bwg.model;
 
+import com.bwg.domain.Users;
 import com.bwg.domain.Vendors;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.VendorsRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -21,11 +23,13 @@ public class VendorsModel {
     @JsonIgnore
     private String uVendorId;
     private Long userId;
+    private String userName;
     private String businessName;
     private String location;
     private String description;
     private Double rating;
     private Integer totalReviews;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;
@@ -38,7 +42,10 @@ public class VendorsModel {
     public VendorsModel(Vendors vendors) {
         this.vendorId = vendors.getVendorId();
         this.uVendorId = vendors.getUVendorId();
-        this.userId = vendors.getUser().getUserId();
+        this.userId = !ObjectUtils.isEmpty(vendors.getUser()) ? vendors.getUser().getUserId() : null;
+        this.userName = (vendors.getUser().getFirstName() != null ? vendors.getUser().getFirstName() : "")
+                    + " " +
+                    (vendors.getUser().getLastName() != null ? vendors.getUser().getLastName() : "");
         this.businessName = vendors.getBusinessName();
         this.location = vendors.getLocation();
         this.description = vendors.getDescription();
@@ -136,5 +143,13 @@ public class VendorsModel {
 
     public void setUVendorId(String uVendorId) {
         this.uVendorId = uVendorId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

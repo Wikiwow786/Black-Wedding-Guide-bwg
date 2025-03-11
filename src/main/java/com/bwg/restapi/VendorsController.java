@@ -5,12 +5,16 @@ import com.bwg.model.VendorsModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.VendorsService;
 import com.bwg.util.CorrelationIdHolder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +25,19 @@ public class VendorsController {
     @Autowired
     private VendorsService vendorsService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<VendorsModel>> getAllVendors(@RequestParam(required = false)String search, @AuthPrincipal AuthModel authModel,Pageable pageable) {
-        return ResponseEntity.ok(vendorsService.getAllVendors(search,pageable).map(VendorsModel::new));
+    public ResponseEntity<Page<VendorsModel>> getAllVendors(
+            @RequestParam(required = false) String search,
+            @AuthPrincipal AuthModel authModel,
+            Pageable pageable) {
+        return ResponseEntity.ok(vendorsService.getAllVendors(search, pageable));
     }
 
     @PermitAll

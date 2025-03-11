@@ -4,7 +4,6 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.BookingsModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.BookingsService;
-import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,6 @@ public class BookingsController {
     public ResponseEntity<Page<BookingsModel>> getAllBookings(@AuthPrincipal AuthModel authModel, Pageable pageable) {
         return ResponseEntity.ok(bookingsService.getAllBookings(pageable).map(BookingsModel::new));
     }
-
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
     @GetMapping(value = "/{bookingId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookingsModel> getBookingsById(@PathVariable(value = "bookingId") final Long bookingId, @AuthPrincipal AuthModel authModel) {
@@ -53,5 +51,9 @@ public class BookingsController {
     public ResponseEntity<Void> deleteBooking(@PathVariable(value = "bookingId") final Long bookingId, @AuthPrincipal AuthModel authModel) {
         bookingsService.deleteBooking(bookingId);
         return ResponseEntity.ok().build();
+    }
+
+    public BookingsService getBookingsService() {
+        return bookingsService;
     }
 }

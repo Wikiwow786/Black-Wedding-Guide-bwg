@@ -4,6 +4,7 @@ import com.bwg.domain.Messages;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.MessagesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -22,6 +23,7 @@ public class MessagesModel {
     private Long receiverId;
     private String conversationId;
     private String content;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime sentAt;
 
     public MessagesModel() {
@@ -31,6 +33,12 @@ public class MessagesModel {
         this.messageId = messages.getMessageId();
         this.uMessageId = messages.getUMessageId();
         this.senderId = messages.getSender().getUserId();
+        String senderName = (messages.getSender().getFirstName() != null ? messages.getSender().getFirstName() : "")
+                + " " +
+                (messages.getSender().getLastName() != null ? messages.getSender().getLastName() : "");
+        String receiverName = (messages.getReceiver().getFirstName() != null ? messages.getReceiver().getFirstName() : "")
+                + " " +
+                (messages.getReceiver().getLastName() != null ? messages.getReceiver().getLastName() : "");
         this.receiverId = messages.getReceiver().getUserId();
         this.conversationId = messages.getConversationId();
         this.content = messages.getContent();

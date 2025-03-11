@@ -14,10 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import static com.bwg.logger.Logger.format;
@@ -33,13 +35,13 @@ public class VendorsServiceImpl implements VendorsService {
     private UsersRepository usersRepository;
 
     @Override
-    public Page<Vendors> getAllVendors(String search,Pageable pageable) {
+    public Page<VendorsModel> getAllVendors(String search,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Vendors", this);
         BooleanBuilder filter = new BooleanBuilder();
         if(StringUtils.isNotBlank(search)){
             filter.and(QVendors.vendors.location.containsIgnoreCase(search));
         }
-        return vendorsRepository.findAll(pageable);
+        return vendorsRepository.findAll(filter, pageable).map(VendorsModel::new);
     }
 
     @Override

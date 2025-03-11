@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -32,6 +33,15 @@ public class Categories {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Services> services;
+
+    @ManyToMany
+    @JoinTable(
+            name = "category_tags",
+            schema = "bwg",
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
 
     @PrePersist
     public void setUCategoryId() {
@@ -80,5 +90,13 @@ public class Categories {
 
     public void setServices(List<Services> services) {
         this.services = services;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }

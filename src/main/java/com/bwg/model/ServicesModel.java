@@ -1,9 +1,11 @@
 package com.bwg.model;
 
 import com.bwg.domain.Services;
+import com.bwg.domain.Tag;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -13,6 +15,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ServicesModel {
@@ -27,6 +31,7 @@ public class ServicesModel {
     private Double priceMin;
     private Double priceMax;
     private String availability;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;
@@ -34,6 +39,7 @@ public class ServicesModel {
     private List<BookingsModel> bookingsModel;
     @JsonIgnore
     private List<ReviewsModel> reviewsModel;
+    private Set<TagModel> tags;
 
     public ServicesModel() {
     }
@@ -54,6 +60,8 @@ public class ServicesModel {
                 services.getBookings().stream().map(BookingsModel::new).toList() : null;
         this.reviewsModel = !ObjectUtils.isEmpty(services.getReviews()) ?
                 services.getReviews().stream().map(ReviewsModel::new).toList() : null;
+        this.tags = !ObjectUtils.isEmpty(services.getTags()) ?
+                services.getTags().stream().map(TagModel::new).collect(Collectors.toSet()) :  null;
     }
 
     public Long getServiceId() {
@@ -158,5 +166,13 @@ public class ServicesModel {
 
     public void setReviewsModel(List<ReviewsModel> reviewsModel) {
         this.reviewsModel = reviewsModel;
+    }
+
+    public Set<TagModel> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<TagModel> tags) {
+        this.tags = tags;
     }
 }

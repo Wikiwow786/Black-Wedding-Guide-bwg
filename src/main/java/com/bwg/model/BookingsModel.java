@@ -6,6 +6,7 @@ import com.bwg.domain.Users;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.BookingsRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -21,9 +22,11 @@ public class BookingsModel {
     @JsonIgnore
     private String uBookingId;
     private Long userId;
+    private String userName;
     private Long serviceId;
     private OffsetDateTime eventDate;
     private Bookings.BookingStatus status;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;
@@ -35,6 +38,11 @@ public class BookingsModel {
         this.bookingId = bookings.getBookingId();
         this.uBookingId = bookings.getUBookingId();
         this.userId = bookings.getUser().getUserId();
+        this.userName = (bookings.getUser().getFirstName() != null ? bookings.getUser().getFirstName() : "")
+                + " " +
+                (bookings.getUser().getLastName() != null ? bookings.getUser().getLastName() : "");
+
+
         this.serviceId = bookings.getService().getServiceId();
         this.eventDate = bookings.getEventDate();
         this.status = bookings.getStatus();
@@ -104,5 +112,13 @@ public class BookingsModel {
 
     public void setUBookingId(String uBookingId) {
         this.uBookingId = uBookingId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

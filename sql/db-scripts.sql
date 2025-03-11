@@ -236,3 +236,45 @@ CREATE TABLE IF NOT EXISTS bwg.Media (
 
 -- Create an index on the entity_type and entity_id columns in the bwg schema
 CREATE INDEX idx_entity ON bwg.Media (entity_type, entity_id);
+
+-----------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS bwg.tags (
+    tag_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY, -- Auto-incremented ID
+    name VARCHAR(100) NOT NULL UNIQUE, -- Unique tag name
+    status VARCHAR(50) NOT NULL DEFAULT 'active', -- Status: active/inactive
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_tags_name ON bwg.tags (name);
+CREATE INDEX idx_tags_status ON bwg.tags (status);
+
+
+CREATE TABLE IF NOT EXISTS bwg.service_tags (
+    service_id BIGINT NOT NULL,
+    tag_id BIGINT NOT NULL,
+    PRIMARY KEY (service_id, tag_id),
+    CONSTRAINT fk_service_tag_service FOREIGN KEY (service_id) REFERENCES bwg.services(service_id) ON DELETE CASCADE,
+    CONSTRAINT fk_service_tag_tag FOREIGN KEY (tag_id) REFERENCES bwg.tags(tag_id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_service_tags_service ON bwg.service_tags (service_id);
+CREATE INDEX idx_service_tags_tag ON bwg.service_tags (tag_id);
+CREATE INDEX idx_service_tags_composite ON bwg.service_tags (service_id, tag_id);
+
+
+
+CREATE TABLE IF NOT EXISTS bwg.category_tags (
+    category_id BIGINT NOT NULL,
+    tag_id BIGINT NOT NULL,
+    PRIMARY KEY (category_id, tag_id),
+    CONSTRAINT fk_category_tag_category FOREIGN KEY (category_id) REFERENCES bwg.categories(category_id) ON DELETE CASCADE,
+    CONSTRAINT fk_category_tag_tag FOREIGN KEY (tag_id) REFERENCES bwg.tags(tag_id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_category_tags_category ON bwg.category_tags (category_id);
+CREATE INDEX idx_category_tags_tag ON bwg.category_tags (tag_id);
+CREATE INDEX idx_category_tags_composite ON bwg.category_tags (category_id, tag_id);
+
+

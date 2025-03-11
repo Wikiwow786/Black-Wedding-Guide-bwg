@@ -25,6 +25,7 @@ public class UsersModel {
     private UserRole role;
     private String phoneNumber;
     private String profilePhotoUrl;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;

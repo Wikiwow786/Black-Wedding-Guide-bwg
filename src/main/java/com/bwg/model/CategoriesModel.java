@@ -4,6 +4,7 @@ import com.bwg.domain.Categories;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.CategoriesRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,6 +15,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -23,11 +25,13 @@ public class CategoriesModel {
     @JsonIgnore
     private String uCategoryId;
     private String categoryName;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;
     @JsonIgnore
     private List<ServicesModel> servicesModel;
+    private Set<TagModel> tags;
 
     public CategoriesModel() {
     }
@@ -40,6 +44,8 @@ public class CategoriesModel {
         this.updatedAt = categories.getUpdatedAt();
         this.servicesModel = !ObjectUtils.isEmpty(categories.getServices()) ?
                 categories.getServices().stream().map(ServicesModel::new).toList() : null;
+        this.tags = !ObjectUtils.isEmpty(categories.getTags()) ?
+                categories.getTags().stream().map(TagModel::new).collect(Collectors.toSet()) : null;
     }
 
     public Long getCategoryId() {

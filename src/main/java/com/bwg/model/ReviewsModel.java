@@ -4,6 +4,7 @@ import com.bwg.domain.Reviews;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.ReviewsRepository;
 import com.bwg.util.BeanUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -19,9 +20,11 @@ public class ReviewsModel {
     @JsonIgnore
     private String uReviewId;
     private Long userId;
+    private String userName;
     private Long serviceId;
     private Integer rating;
     private String comment;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime createdAt;
 
     public ReviewsModel() {
@@ -31,6 +34,9 @@ public class ReviewsModel {
         this.reviewId = reviews.getReviewId();
         this.uReviewId = reviews.getUReviewId();
         this.userId = reviews.getUser().getUserId();
+        this.userName = (reviews.getUser().getFirstName() != null ? reviews.getUser().getFirstName() : "")
+                + " " +
+                (reviews.getUser().getLastName() != null ? reviews.getUser().getLastName() : "");
         this.serviceId = reviews.getService().getServiceId();
         this.rating = reviews.getRating();
         this.comment = reviews.getComment();
@@ -91,5 +97,13 @@ public class ReviewsModel {
 
     public void setUReviewId(String uReviewId) {
         this.uReviewId = uReviewId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
