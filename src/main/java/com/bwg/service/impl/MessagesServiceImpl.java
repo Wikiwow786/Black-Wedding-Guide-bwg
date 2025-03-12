@@ -2,11 +2,16 @@ package com.bwg.service.impl;
 
 import com.bwg.domain.Messages;
 import com.bwg.domain.Payments;
+import com.bwg.domain.QMessages;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.model.AuthModel;
 import com.bwg.model.MessagesModel;
 import com.bwg.repository.MessagesRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.MessagesService;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,9 +35,21 @@ public class MessagesServiceImpl implements MessagesService {
     private UsersRepository usersRepository;
 
     @Override
-    public Page<Messages> getAllMessages(Pageable pageable) {
+    public Page<Messages> getAllMessages(String search,String conversationId,AuthModel authModel,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Messages", this);
-        return messagesRepository.findAll(pageable);
+        BooleanBuilder filter = new BooleanBuilder();
+        BooleanExpression senderCondition = QMessages.messages.sender.userId.eq(Long.parseLong(authModel.userId()));
+        BooleanExpression receiverCondition = QMessages.messages.receiver.userId.eq(Long.parseLong(authModel.userId()));
+        filter.and(senderCondition.or(receiverCondition));
+
+        if(conversationId != null){
+            filter.and(QMessages.messages.conversationId.eq(conversationId));
+        }
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QMessages.messages.content.containsIgnoreCase(search));
+        }
+
+        return messagesRepository.findAll(filter,pageable);
     }
 
     @Override

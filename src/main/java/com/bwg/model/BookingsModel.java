@@ -1,11 +1,13 @@
 package com.bwg.model;
 
+import com.bwg.config.OffsetDateTimeCustomSerializer;
 import com.bwg.domain.Bookings;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 
 import java.time.OffsetDateTime;
@@ -22,7 +24,7 @@ public class BookingsModel {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
     private OffsetDateTime eventDate;
     private Bookings.BookingStatus status;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+    @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;
@@ -37,8 +39,6 @@ public class BookingsModel {
         this.userName = (bookings.getUser().getFirstName() != null ? bookings.getUser().getFirstName() : "")
                 + " " +
                 (bookings.getUser().getLastName() != null ? bookings.getUser().getLastName() : "");
-
-
         this.serviceId = bookings.getService().getServiceId();
         this.eventDate = bookings.getEventDate();
         this.status = bookings.getStatus();

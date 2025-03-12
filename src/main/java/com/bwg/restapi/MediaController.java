@@ -24,8 +24,8 @@ public class MediaController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<MediaModel>> getAllMedia(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(mediaService.getAllMedia(pageable).map(MediaModel::new));
+    public ResponseEntity<Page<MediaModel>> getAllMedia(@RequestParam(required = false)String search,@RequestParam(required = false)Long entityId,@AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(mediaService.getAllMedia(search,entityId,pageable).map(MediaModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

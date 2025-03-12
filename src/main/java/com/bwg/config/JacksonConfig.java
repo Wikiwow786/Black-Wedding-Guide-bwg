@@ -26,7 +26,7 @@ public class JacksonConfig {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         SimpleModule module = new SimpleModule();
-        module.addSerializer(OffsetDateTime.class, new OffsetDateTimeCustomSerializer());
+       // module.addSerializer(OffsetDateTime.class, new OffsetDateTimeCustomSerializer());
         objectMapper.registerModule(module);
 
         return objectMapper;

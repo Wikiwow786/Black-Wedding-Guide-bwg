@@ -26,6 +26,8 @@
         <hibernate.version>6.4.2.Final</hibernate.version>
         <jwt.version>0.12.6</jwt.version>
         <springdoc.version>2.6.0</springdoc.version>
+        <aws.java.sdk.version>1.12.782</aws.java.sdk.version>
+        <spring-cloud-starter-aws-version>2.2.6.RELEASE</spring-cloud-starter-aws-version>
         <postgresql.version>42.6.0</postgresql.version>
         <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
@@ -36,6 +38,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws.java.sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-aws</artifactId>
+            <version>${spring-cloud-starter-aws-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

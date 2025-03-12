@@ -34,7 +34,8 @@ public class CategoriesServiceImpl implements CategoriesService {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Categories", this);
         BooleanBuilder filter = new BooleanBuilder();
         if(StringUtils.isNotBlank(search)){
-            filter.and(QCategories.categories.categoryName.containsIgnoreCase(search));
+            filter.and(QCategories.categories.categoryName.containsIgnoreCase(search)
+                    .or(QCategories.categories.tags.any().name.containsIgnoreCase(search)));
         }
         return categoriesRepository.findAll(filter,pageable);
     }

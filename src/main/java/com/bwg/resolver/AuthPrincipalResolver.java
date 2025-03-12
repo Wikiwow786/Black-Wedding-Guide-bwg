@@ -148,7 +148,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
                     new UsernamePasswordAuthenticationToken(authModel, null, authorities)
             );
 
-            return new AuthModel(authModel.authorization(), authModel.userId(), authModel.email(), authModel.correlationId());
+            return new AuthModel(authModel.authorization(),  user.getUserId().toString(), authModel.email(), authModel.correlationId());
         }
         return authModel;
     }

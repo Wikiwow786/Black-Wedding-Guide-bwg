@@ -38,12 +38,12 @@ public class TagController {
         return ResponseEntity.ok(tagService.createTag(tagModel,authModel));
     }
 
-    @PostMapping(value = "/{tagId}/assign-to-service/{serviceId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{tagId}/service/{serviceId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TagModel> assignTagToService(@PathVariable Long tagId, @PathVariable Long serviceId) {
         return ResponseEntity.ok(tagService.assignTagToService(tagId,serviceId));
     }
 
-    @PostMapping(value = "/{tagId}/assign-to-category/{categoryId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{tagId}/category/{categoryId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TagModel> assignTagToCategory(@PathVariable Long tagId, @PathVariable Long categoryId) {
         return ResponseEntity.ok(tagService.assignTagToCategory(tagId,categoryId));
     }

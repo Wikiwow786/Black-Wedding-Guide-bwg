@@ -1,10 +1,13 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Media;
+import com.bwg.domain.QMedia;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.MediaModel;
 import com.bwg.repository.MediaRepository;
 import com.bwg.service.MediaService;
+import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,9 +29,16 @@ public class MediaServiceImpl implements MediaService {
     private MediaRepository mediaRepository;
 
     @Override
-    public Page<Media> getAllMedia(Pageable pageable) {
+    public Page<Media> getAllMedia(String search,Long entityId,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Media", this);
-        return mediaRepository.findAll(pageable);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QMedia.media.title.containsIgnoreCase(search));
+        }
+        if(entityId != null){
+            filter.and(QMedia.media.entityId.eq(entityId));
+        }
+        return mediaRepository.findAll(filter,pageable);
     }
 
     @Override
