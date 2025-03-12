@@ -95,4 +95,12 @@ public class CategoriesModel {
     public void setUCategoryId(String uCategoryId) {
         this.uCategoryId = uCategoryId;
     }
+
+    public Set<TagModel> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<TagModel> tags) {
+        this.tags = tags;
+    }
 }
