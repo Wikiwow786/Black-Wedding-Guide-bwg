@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static com.bwg.util.RoleUtil.extractUserRole;
 
 @RestController
 @RequestMapping("/bookings")
@@ -22,10 +22,11 @@ public class BookingsController {
     @Autowired
     private BookingsService bookingsService;
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER', 'ROLE_COUPLE')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<BookingsModel>> getAllBookings(@RequestParam(required = false) String search, @RequestParam(required = false) Bookings.BookingStatus status, @AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(bookingsService.getAllBookings(search, status, pageable).map(BookingsModel::new));
+        String userRole = extractUserRole();
+        return ResponseEntity.ok(bookingsService.getAllBookings(search, status, authModel, userRole, pageable).map(BookingsModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
@@ -53,9 +54,5 @@ public class BookingsController {
     public ResponseEntity<Void> deleteBooking(@PathVariable(value = "bookingId") final Long bookingId, @AuthPrincipal AuthModel authModel) {
         bookingsService.deleteBooking(bookingId);
         return ResponseEntity.ok().build();
-    }
-
-    public BookingsService getBookingsService() {
-        return bookingsService;
     }
 }

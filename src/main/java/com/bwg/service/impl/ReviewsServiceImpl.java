@@ -4,6 +4,7 @@ import com.bwg.domain.Bookings;
 import com.bwg.domain.Messages;
 import com.bwg.domain.QReviews;
 import com.bwg.domain.Reviews;
+import com.bwg.exception.ForbiddenException;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.ReviewsModel;
 import com.bwg.repository.BookingsRepository;
@@ -56,7 +57,7 @@ public class ReviewsServiceImpl implements ReviewsService {
     public Reviews getReviewById(Long reviewId) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching Review by Id {0}", reviewId);
         return reviewsRepository.findById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase()));
+                .orElseThrow(() -> new ResourceNotFoundException("Review Not Found"));
     }
 
     @Override
@@ -77,7 +78,7 @@ public class ReviewsServiceImpl implements ReviewsService {
             reviews.setCreatedAt(OffsetDateTime.now());
             return reviewsRepository.save(reviews);
         }else{
-            throw new ResourceNotFoundException("Booking not found or not completed");
+            throw new ForbiddenException("Booking not found or not completed");
         }
     }
 

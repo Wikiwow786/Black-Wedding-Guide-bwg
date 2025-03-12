@@ -38,19 +38,22 @@ public class BookingsServiceImpl implements BookingsService {
     private ServicesRepository servicesRepository;
 
     @Override
-    public Page<Bookings> getAllBookings(String search,Bookings.BookingStatus status,Pageable pageable) {
+    public Page<Bookings> getAllBookings(String search, Bookings.BookingStatus status, AuthModel authModel, String userRole, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
         BooleanBuilder filter = new BooleanBuilder();
+
+        applyRoleFilter(filter, Long.parseLong(authModel.userId()), userRole);
+
         if (StringUtils.isNotBlank(search)) {
-             filter.and(
+            filter.and(
                     QBookings.bookings.user.firstName.containsIgnoreCase(search)
                             .or(QBookings.bookings.user.lastName.containsIgnoreCase(search))
             );
         }
-        if(status != null){
+        if (status != null) {
             filter.and(QBookings.bookings.status.eq(status));
         }
-        return bookingsRepository.findAll(filter,pageable);
+        return bookingsRepository.findAll(filter, pageable);
     }
 
     @Override
@@ -97,5 +100,15 @@ public class BookingsServiceImpl implements BookingsService {
     public void deleteBooking(Long bookingId) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete Booking information for Booking Id {0} ", bookingId), this);
         bookingsRepository.deleteById(bookingId);
+    }
+
+    private void applyRoleFilter(BooleanBuilder filter, Long userId, String userRole) {
+        switch (userRole) {
+            case "ROLE_VENDOR" -> filter.and(QBookings.bookings.service.vendor.user.userId.eq(userId));
+            case "ROLE_COUPLE" -> filter.and(QBookings.bookings.user.userId.eq(userId));
+            case "ROLE_ADMIN", "ROLE_OWNER" -> {
+            } // No filtering needed
+            default -> throw new IllegalArgumentException("Unauthorized Role: " + userRole);
+        }
     }
 }
