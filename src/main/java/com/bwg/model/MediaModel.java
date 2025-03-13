@@ -1,5 +1,6 @@
 package com.bwg.model;
 
+import com.bwg.config.OffsetDateTimeCustomSerializer;
 import com.bwg.domain.Media.*;
 import com.bwg.domain.Media;
 import com.bwg.exception.ResourceNotFoundException;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 
@@ -26,7 +28,7 @@ public class MediaModel {
     private String thumbnailUrl;
     private String mimeType;
     private String title;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+    @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;

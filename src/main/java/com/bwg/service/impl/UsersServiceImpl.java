@@ -1,5 +1,6 @@
 package com.bwg.service.impl;
 
+import com.bwg.domain.QUsers;
 import com.bwg.domain.Services;
 import com.bwg.domain.Users;
 import com.bwg.exception.ResourceAlreadyExistsException;
@@ -9,6 +10,8 @@ import com.bwg.model.UsersModel;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.UsersService;
 import com.bwg.util.BeanUtil;
+import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,9 +36,20 @@ public class UsersServiceImpl implements UsersService {
     private UsersRepository usersRepository;
 
     @Override
-    public Page<Users> getAllUsers(Pageable pageable) {
+    public Page<Users> getAllUsers(String search,Long userId,Long vendorId,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
-        return usersRepository.findAll(pageable);
+        BooleanBuilder filter = new BooleanBuilder();
+        if(StringUtils.isNotBlank(search)){
+            filter.and(QUsers.users.firstName.containsIgnoreCase(search)
+                    .or(QUsers.users.lastName.containsIgnoreCase(search)));
+        }
+        if(userId != null){
+            filter.and(QUsers.users.userId.eq(userId));
+        }
+        if(vendorId != null){
+            filter.and(QUsers.users.vendor.vendorId.eq(vendorId));
+        }
+        return usersRepository.findAll(filter,pageable);
     }
 
     @Override

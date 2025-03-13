@@ -1,5 +1,6 @@
 package com.bwg.model;
 
+import com.bwg.config.OffsetDateTimeCustomSerializer;
 import com.bwg.domain.Categories;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.CategoriesRepository;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
@@ -25,7 +27,7 @@ public class CategoriesModel {
     @JsonIgnore
     private String uCategoryId;
     private String categoryName;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+    @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;

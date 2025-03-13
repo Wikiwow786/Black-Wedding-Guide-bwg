@@ -50,6 +50,8 @@ CREATE INDEX IF NOT EXISTS idx_role
     (role ASC NULLS LAST)
     TABLESPACE pg_default;
 
+ CREATE INDEX idx
+
 --------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS bwg.vendors
@@ -134,6 +136,8 @@ EXECUTE FUNCTION bwg.update_updated_at_column_services();
 -- Create indexes on vendor_id and category_id columns in the bwg schema
 CREATE INDEX idx_vendor ON bwg.Services (vendor_id);
 CREATE INDEX idx_category ON bwg.Services (category_id);
+CREATE INDEX idx_price on bwg.Services (price_max, price_min);
+CREATE INDEX idx_service_name on bwg.Services (service_name);
 
 --------------------------------------------------------------------------------------
 
@@ -155,6 +159,8 @@ CREATE TABLE IF NOT EXISTS bwg.Reviews (
 -- Create indexes on user_id and service_id columns in the bwg schema
 CREATE INDEX idx_user ON bwg.Reviews (user_id);
 CREATE INDEX idx_service ON bwg.Reviews (service_id);
+CREATE INDEX idx_user_service ON bwg.reviews (user_id, service_id);
+CREATE INDEX idx_rating on bwg.reviews (rating);
 
 --------------------------------------------------------------------------------------
 
@@ -197,6 +203,7 @@ CREATE TABLE IF NOT EXISTS bwg.Payments (
 -- Create indexes on status and transaction_reference columns in the bwg schema
 CREATE INDEX idx_status_payment ON bwg.Payments (status);
 CREATE INDEX idx_transaction_ref ON bwg.Payments (transaction_reference);
+CREATE INDEX idx_currency ON bwg.Payments (currency);
 
 
 --------------------------------------------------------------------------------------
@@ -216,6 +223,11 @@ CREATE TABLE IF NOT EXISTS bwg.Messages (
 
 -- Create indexes on sender_id and receiver_id columns in the bwg schema
 CREATE INDEX idx_sender_receiver ON bwg.Messages (sender_id, receiver_id);
+CREATE INDEX idx_content ON bwg.Messages(content);
+CREATE INDEX idx_conversation ON bwg.Messages (conversation_id);
+CREATE INDEX idx_conversation_sender_receiver ON bwg.Messages (conversation_id, sender_id, receiver_id);
+
+
 
 
 -----------------------------------------------------------------------------------
@@ -236,6 +248,7 @@ CREATE TABLE IF NOT EXISTS bwg.Media (
 
 -- Create an index on the entity_type and entity_id columns in the bwg schema
 CREATE INDEX idx_entity ON bwg.Media (entity_type, entity_id);
+CREATE INDEX idx_title ON bwg.Media (title);
 
 -----------------------------------------------------------------------------------
 

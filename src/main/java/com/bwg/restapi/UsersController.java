@@ -4,7 +4,6 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.UsersModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.UsersService;
-import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -24,8 +22,8 @@ public class UsersController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<UsersModel>> getAllUsers(@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(usersService.getAllUsers(pageable).map(UsersModel::new));
+    public ResponseEntity<Page<UsersModel>> getAllUsers(@RequestParam(required = false)String search,@RequestParam(required = false)Long userId,@RequestParam(required = false)Long vendorId,@AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(usersService.getAllUsers(search,userId,vendorId,pageable).map(UsersModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

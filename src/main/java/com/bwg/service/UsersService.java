@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface UsersService {
-    Page<Users> getAllUsers(Pageable pageable);
+    Page<Users> getAllUsers(String search,Long userId,Long vendorId,Pageable pageable);
 
     Users getUserById(Long userId, AuthModel authModel);
 

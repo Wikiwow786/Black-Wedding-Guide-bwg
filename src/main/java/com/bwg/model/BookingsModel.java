@@ -21,7 +21,7 @@ public class BookingsModel {
     private Long userId;
     private String userName;
     private Long serviceId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+    @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)
     private OffsetDateTime eventDate;
     private Bookings.BookingStatus status;
     @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)

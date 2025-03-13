@@ -25,24 +25,8 @@ public class JacksonConfig {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        SimpleModule module = new SimpleModule();
-       // module.addSerializer(OffsetDateTime.class, new OffsetDateTimeCustomSerializer());
-        objectMapper.registerModule(module);
-
         return objectMapper;
     }
 
-    @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(ObjectMapper objectMapper) {
-        return new MappingJackson2HttpMessageConverter(objectMapper);
-    }
-
-    // ✅ Corrected: This method now returns a list of converters
-    @Bean
-    public List<HttpMessageConverter<?>> configureMessageConverters(ObjectMapper objectMapper) {
-        List<HttpMessageConverter<?>> converters = new ArrayList<>();
-        converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
-        return converters;
-    }
 }
 

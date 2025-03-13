@@ -1,9 +1,11 @@
 package com.bwg.model;
 
+import com.bwg.config.OffsetDateTimeCustomSerializer;
 import com.bwg.domain.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.OffsetDateTime;
 
@@ -12,9 +14,9 @@ public class TagModel {
     private Long tagId;
     private String name;
     private String status;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+    @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)
     private OffsetDateTime createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+    @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)
     private OffsetDateTime updatedAt;
 
     public TagModel() {

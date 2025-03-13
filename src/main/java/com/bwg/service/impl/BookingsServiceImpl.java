@@ -107,7 +107,7 @@ public class BookingsServiceImpl implements BookingsService {
             case "ROLE_VENDOR" -> filter.and(QBookings.bookings.service.vendor.user.userId.eq(userId));
             case "ROLE_COUPLE" -> filter.and(QBookings.bookings.user.userId.eq(userId));
             case "ROLE_ADMIN", "ROLE_OWNER" -> {
-            } // No filtering needed
+            }
             default -> throw new IllegalArgumentException("Unauthorized Role: " + userRole);
         }
     }
