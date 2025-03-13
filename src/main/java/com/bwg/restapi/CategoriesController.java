@@ -2,10 +2,8 @@ package com.bwg.restapi;
 
 import com.bwg.model.AuthModel;
 import com.bwg.model.CategoriesModel;
-import com.bwg.model.MediaModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.CategoriesService;
-import com.bwg.util.CorrelationIdHolder;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +25,7 @@ public class CategoriesController {
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<CategoriesModel>> getAllCategories(@RequestParam(required = false) String search,@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(categoriesService.getAllCategories(search,pageable).map(CategoriesModel::new));
+        return ResponseEntity.ok(categoriesService.getAllCategories(search,pageable));
     }
 
     @PermitAll

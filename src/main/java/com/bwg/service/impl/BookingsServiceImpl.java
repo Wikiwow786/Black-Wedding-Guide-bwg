@@ -2,7 +2,9 @@ package com.bwg.service.impl;
 
 import com.bwg.domain.Bookings;
 import com.bwg.domain.QBookings;
+import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.exception.UnauthorizedException;
 import com.bwg.model.AuthModel;
 import com.bwg.model.BookingsModel;
 import com.bwg.repository.BookingsRepository;
@@ -103,12 +105,14 @@ public class BookingsServiceImpl implements BookingsService {
     }
 
     private void applyRoleFilter(BooleanBuilder filter, Long userId, String userRole) {
-        switch (userRole) {
-            case "ROLE_VENDOR" -> filter.and(QBookings.bookings.service.vendor.user.userId.eq(userId));
-            case "ROLE_COUPLE" -> filter.and(QBookings.bookings.user.userId.eq(userId));
-            case "ROLE_ADMIN", "ROLE_OWNER" -> {
+        UserRole role = UserRole.fromString(userRole);
+
+        switch (role) {
+            case ROLE_VENDOR -> filter.and(QBookings.bookings.service.vendor.user.userId.eq(userId));
+            case ROLE_COUPLE -> filter.and(QBookings.bookings.user.userId.eq(userId));
+            case ROLE_ADMIN, ROLE_OWNER -> {
             }
-            default -> throw new IllegalArgumentException("Unauthorized Role: " + userRole);
+            default -> throw new UnauthorizedException("Unauthorized Role: " + userRole);
         }
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface CategoriesService {
-    Page<Categories> getAllCategories(String search,Pageable pageable);
+    Page<CategoriesModel> getAllCategories(String search,Pageable pageable);
 
     Categories getCategoryById(Long categoryId);
 

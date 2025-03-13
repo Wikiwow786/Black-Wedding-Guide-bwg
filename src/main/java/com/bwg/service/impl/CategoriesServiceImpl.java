@@ -12,7 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -30,14 +30,27 @@ public class CategoriesServiceImpl implements CategoriesService {
     private CategoriesRepository categoriesRepository;
 
     @Override
-    public Page<Categories> getAllCategories(String search,Pageable pageable) {
+    public Page<CategoriesModel> getAllCategories(String search,Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Categories", this);
         BooleanBuilder filter = new BooleanBuilder();
         if(StringUtils.isNotBlank(search)){
             filter.and(QCategories.categories.categoryName.containsIgnoreCase(search)
                     .or(QCategories.categories.tags.any().name.containsIgnoreCase(search)));
         }
-        return categoriesRepository.findAll(filter,pageable);
+        Page<Long> categoryIdsPage = categoriesRepository.findAllCategoryIds(pageable);
+        List<Long> categoryIds = categoryIdsPage.getContent();
+
+        if (categoryIds.isEmpty()) {
+            return Page.empty();
+        }
+
+        List<Categories> categories = categoriesRepository.findAllById(categoryIds);
+
+        List<CategoriesModel> categoryModels = categories.stream()
+                .map(CategoriesModel::new)
+                .toList();
+
+        return new PageImpl<>(categoryModels, pageable, categoryIdsPage.getTotalElements());
     }
 
     @Override
