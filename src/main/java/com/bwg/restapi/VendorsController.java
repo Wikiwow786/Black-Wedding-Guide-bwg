@@ -37,7 +37,7 @@ public class VendorsController {
             @RequestParam(required = false) String search,
             @AuthPrincipal AuthModel authModel,
             Pageable pageable) {
-        return ResponseEntity.ok(vendorsService.getAllVendors(search, pageable));
+        return ResponseEntity.ok(vendorsService.getAllVendors(search, authModel, pageable));
     }
 
     @PermitAll

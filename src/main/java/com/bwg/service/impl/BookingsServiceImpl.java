@@ -2,6 +2,8 @@ package com.bwg.service.impl;
 
 import com.bwg.domain.Bookings;
 import com.bwg.domain.QBookings;
+import com.bwg.domain.QUsers;
+import com.bwg.domain.QVendors;
 import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.exception.UnauthorizedException;
@@ -12,6 +14,7 @@ import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.BookingsService;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +111,12 @@ public class BookingsServiceImpl implements BookingsService {
         UserRole role = UserRole.fromString(userRole);
 
         switch (role) {
-            case ROLE_VENDOR -> filter.and(QBookings.bookings.service.vendor.user.userId.eq(userId));
+//            case ROLE_VENDOR -> filter.and(QBookings.bookings.service.vendor.user.userId.eq(userId));
+            case ROLE_VENDOR -> filter.and(QBookings.bookings.service.vendor.vendorId.in(
+                    JPAExpressions.select(QVendors.vendors.vendorId)
+                            .from(QVendors.vendors)
+                            .where(QVendors.vendors.user.userId.eq(userId))
+            ));
             case ROLE_COUPLE -> filter.and(QBookings.bookings.user.userId.eq(userId));
             case ROLE_ADMIN, ROLE_OWNER -> {
             }

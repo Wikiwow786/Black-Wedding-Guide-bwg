@@ -4,6 +4,7 @@ import com.bwg.domain.QVendors;
 import com.bwg.domain.Vendors;
 import com.bwg.exception.ResourceAlreadyExistsException;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.model.AuthModel;
 import com.bwg.model.VendorsModel;
 import com.bwg.repository.UsersRepository;
 import com.bwg.repository.VendorsRepository;
@@ -35,10 +36,11 @@ public class VendorsServiceImpl implements VendorsService {
     private UsersRepository usersRepository;
 
     @Override
-    public Page<VendorsModel> getAllVendors(String search,Pageable pageable) {
+    public Page<VendorsModel> getAllVendors(String search, AuthModel authModel, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Vendors", this);
         BooleanBuilder filter = new BooleanBuilder();
-        if(StringUtils.isNotBlank(search)){
+
+        if (StringUtils.isNotBlank(search)) {
             filter.and(QVendors.vendors.location.containsIgnoreCase(search)
                     .or(QVendors.vendors.businessName.containsIgnoreCase(search)));
         }
