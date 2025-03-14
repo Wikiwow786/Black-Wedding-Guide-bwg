@@ -2,7 +2,7 @@ package com.bwg.service.impl;
 
 import com.bwg.domain.Bookings;
 import com.bwg.domain.QBookings;
-import com.bwg.domain.QUsers;
+
 import com.bwg.domain.QVendors;
 import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
@@ -62,10 +62,20 @@ public class BookingsServiceImpl implements BookingsService {
     }
 
     @Override
-    public Bookings getBookingById(Long bookingId) {
+    public Bookings getBookingById(Long bookingId, String userRole, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching User by Id {0}", bookingId);
-        return bookingsRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase()));
+        UserRole role = UserRole.fromString(userRole);
+
+        if (role.equals(UserRole.ROLE_COUPLE)) {
+            return bookingsRepository.findByBookingIdAndUser_UserId(bookingId, Long.parseLong(authModel.userId()));
+        } else if (role.equals(UserRole.ROLE_ADMIN) || role.equals(UserRole.ROLE_OWNER)) {
+            // Admins & Owners can fetch any booking
+            return bookingsRepository.findById(bookingId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+        }else{
+            return bookingsRepository.findByBookingIdAndService_Vendor_User_UserId(bookingId, Long.parseLong(authModel.userId()))
+                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+        }
     }
 
     @Override
@@ -111,7 +121,6 @@ public class BookingsServiceImpl implements BookingsService {
         UserRole role = UserRole.fromString(userRole);
 
         switch (role) {
-//            case ROLE_VENDOR -> filter.and(QBookings.bookings.service.vendor.user.userId.eq(userId));
             case ROLE_VENDOR -> filter.and(QBookings.bookings.service.vendor.vendorId.in(
                     JPAExpressions.select(QVendors.vendors.vendorId)
                             .from(QVendors.vendors)

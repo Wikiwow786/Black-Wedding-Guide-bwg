@@ -12,7 +12,7 @@ import java.util.List;
 public interface BookingsService {
     Page<Bookings> getAllBookings(String search, Bookings.BookingStatus status, AuthModel authModel, String userRole, Pageable pageable);
 
-    Bookings getBookingById(Long bookingId);
+    Bookings getBookingById(Long bookingId, String userRole, AuthModel authModel);
 
     Bookings createBooking(BookingsModel booking, AuthModel authModel);
 

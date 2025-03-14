@@ -30,6 +30,11 @@ public class TagModel {
         this.updatedAt = tag.getUpdatedAt();
     }
 
+    public TagModel(Long tagId, String name) {
+        this.tagId = tagId;
+        this.name = name;
+    }
+
     public Long getTagId() {
         return tagId;
     }

@@ -1,13 +1,16 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Categories;
-import com.bwg.domain.QCategories;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.CategoriesModel;
+import com.bwg.model.ServicesModel;
+import com.bwg.model.TagModel;
+import com.bwg.projection.CategoriesProjection;
+import com.bwg.projection.ServicesProjection;
 import com.bwg.repository.CategoriesRepository;
+import com.bwg.repository.ServicesRepository;
+import com.bwg.repository.TagRepository;
 import com.bwg.service.CategoriesService;
-import com.querydsl.core.BooleanBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,8 +19,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.bwg.logger.Logger.format;
 import static com.bwg.logger.Logger.info;
@@ -29,29 +32,39 @@ public class CategoriesServiceImpl implements CategoriesService {
     @Autowired
     private CategoriesRepository categoriesRepository;
 
-    @Override
-    public Page<CategoriesModel> getAllCategories(String search,Pageable pageable) {
-        info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Categories", this);
-        BooleanBuilder filter = new BooleanBuilder();
-        if(StringUtils.isNotBlank(search)){
-            filter.and(QCategories.categories.categoryName.containsIgnoreCase(search)
-                    .or(QCategories.categories.tags.any().name.containsIgnoreCase(search)));
-        }
-        Page<Long> categoryIdsPage = categoriesRepository.findAllCategoryIds(pageable);
-        List<Long> categoryIds = categoryIdsPage.getContent();
+    @Autowired
+    private TagRepository tagRepository;
 
-        if (categoryIds.isEmpty()) {
+    @Autowired
+    private ServicesRepository servicesRepository;
+
+    @Override
+    public Page<CategoriesModel> getAllCategories(String search, Pageable pageable) {
+        info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Categories", this);
+
+        Page<CategoriesProjection> categoriesPage = categoriesRepository.findCategories(search, pageable);
+        if (categoriesPage.isEmpty()) {
             return Page.empty();
         }
 
-        List<Categories> categories = categoriesRepository.findAllById(categoryIds);
+        List<Long> categoryIds = categoriesPage.map(CategoriesProjection::getCategoryId).toList();
+        Map<Long, List<ServicesModel>> serviceMap = mapServicesToCategories(categoryIds);
+        Set<TagModel> tagModels = fetchTags(categoryIds);
 
-        List<CategoriesModel> categoryModels = categories.stream()
-                .map(CategoriesModel::new)
+        List<CategoriesModel> categoryModels = categoriesPage.getContent().stream()
+                .map(categoryProj -> new CategoriesModel(
+                        categoryProj.getCategoryId(),
+                        categoryProj.getCategoryName(),
+                        categoryProj.getCreatedAt(),
+                        categoryProj.getUpdatedAt(),
+                        serviceMap.getOrDefault(categoryProj.getCategoryId(), Collections.emptyList()),
+                        tagModels
+                ))
                 .toList();
 
-        return new PageImpl<>(categoryModels, pageable, categoryIdsPage.getTotalElements());
+        return new PageImpl<>(categoryModels, pageable, categoriesPage.getTotalElements());
     }
+
 
     @Override
     public Categories getCategoryById(Long categoryId) {
@@ -91,5 +104,26 @@ public class CategoriesServiceImpl implements CategoriesService {
     public void deleteCategory(Long categoryId) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete Category information for Category Id {0} ", categoryId), this);
         categoriesRepository.deleteById(categoryId);
+    }
+
+    private Map<Long, List<ServicesModel>> mapServicesToCategories(List<Long> categoryIds) {
+        return servicesRepository.findServicesForCategories(categoryIds).stream()
+                .collect(Collectors.groupingBy(
+                        ServicesProjection::getCategoryId,
+                        Collectors.mapping(s -> new ServicesModel(
+                                s.getServiceId(),
+                                s.getServiceName(),
+                                s.getPriceMin(),
+                                s.getPriceMax(),
+                                s.getAvailability(),
+                                s.getCategoryId()
+                        ), Collectors.toList())
+                ));
+    }
+
+    private Set<TagModel> fetchTags(List<Long> categoryIds) {
+        return tagRepository.findTagsForCategories(categoryIds).stream()
+                .map(t -> new TagModel(t.getTagId(), t.getName()))
+                .collect(Collectors.toSet());
     }
 }

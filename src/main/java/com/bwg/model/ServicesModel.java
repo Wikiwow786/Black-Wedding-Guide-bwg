@@ -66,6 +66,16 @@ public class ServicesModel {
                 services.getTags().stream().map(TagModel::new).collect(Collectors.toSet()) :  null;
     }
 
+    public ServicesModel(Long serviceId, String serviceName, Double priceMin, Double priceMax,
+                         String availability, Long categoryId) {
+        this.serviceId = serviceId;
+        this.serviceName = serviceName;
+        this.priceMin = priceMin;
+        this.priceMax = priceMax;
+        this.availability = availability;
+        this.categoryId = categoryId;
+    }
+
     public Long getServiceId() {
         return serviceId;
     }

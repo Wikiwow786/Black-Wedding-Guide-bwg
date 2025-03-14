@@ -32,7 +32,8 @@ public class BookingsController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
     @GetMapping(value = "/{bookingId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookingsModel> getBookingsById(@PathVariable(value = "bookingId") final Long bookingId, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new BookingsModel(bookingsService.getBookingById(bookingId)));
+        String userRole = extractUserRole();
+        return ResponseEntity.ok(new BookingsModel(bookingsService.getBookingById(bookingId, userRole, authModel)));
     }
 
 

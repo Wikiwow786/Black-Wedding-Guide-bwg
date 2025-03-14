@@ -50,6 +50,16 @@ public class CategoriesModel {
                 categories.getTags().stream().map(TagModel::new).collect(Collectors.toSet()) : null;
     }
 
+    public CategoriesModel(Long categoryId, String categoryName, OffsetDateTime createdAt, OffsetDateTime updatedAt,
+                           List<ServicesModel> servicesModel, Set<TagModel> tags) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.servicesModel = servicesModel;
+        this.tags = tags;
+    }
+
     public Long getCategoryId() {
         return categoryId;
     }

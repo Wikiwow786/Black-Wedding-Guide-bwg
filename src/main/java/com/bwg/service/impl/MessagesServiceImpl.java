@@ -6,6 +6,7 @@ import com.bwg.domain.QMessages;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.AuthModel;
 import com.bwg.model.MessagesModel;
+import com.bwg.projection.MessagesProjection;
 import com.bwg.repository.MessagesRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.MessagesService;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -35,21 +37,18 @@ public class MessagesServiceImpl implements MessagesService {
     private UsersRepository usersRepository;
 
     @Override
-    public Page<Messages> getAllMessages(String search,String conversationId,AuthModel authModel,Pageable pageable) {
+    public Page<MessagesModel> getAllMessages(String search, String conversationId, AuthModel authModel, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Messages", this);
-        BooleanBuilder filter = new BooleanBuilder();
-        BooleanExpression senderCondition = QMessages.messages.sender.userId.eq(Long.parseLong(authModel.userId()));
-        BooleanExpression receiverCondition = QMessages.messages.receiver.userId.eq(Long.parseLong(authModel.userId()));
-        filter.and(senderCondition.or(receiverCondition));
 
-        if(conversationId != null){
-            filter.and(QMessages.messages.conversationId.eq(conversationId));
-        }
-        if(StringUtils.isNotBlank(search)){
-            filter.and(QMessages.messages.content.containsIgnoreCase(search));
-        }
+        Long userId = Long.parseLong(authModel.userId());
 
-        return messagesRepository.findAll(filter,pageable);
+        Page<MessagesProjection> messagesPage = messagesRepository.findMessages(conversationId, userId, pageable);
+
+        List<MessagesModel> messagesModelList = messagesPage.getContent().stream()
+                .map(MessagesModel::new)
+                .toList();
+
+        return new PageImpl<>(messagesModelList, pageable, messagesPage.getTotalElements());
     }
 
     @Override

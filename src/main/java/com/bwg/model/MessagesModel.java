@@ -3,8 +3,10 @@ package com.bwg.model;
 import com.bwg.config.OffsetDateTimeCustomSerializer;
 import com.bwg.domain.Messages;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.projection.MessagesProjection;
 import com.bwg.repository.MessagesRepository;
 import com.bwg.util.BeanUtil;
+import com.bwg.util.NameUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -27,6 +29,8 @@ public class MessagesModel {
     private String content;
     @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)
     private OffsetDateTime sentAt;
+    private String senderName;
+    private String receiverName;
 
     public MessagesModel() {
     }
@@ -35,17 +39,26 @@ public class MessagesModel {
         this.messageId = messages.getMessageId();
         this.uMessageId = messages.getUMessageId();
         this.senderId = messages.getSender().getUserId();
-        String senderName = (messages.getSender().getFirstName() != null ? messages.getSender().getFirstName() : "")
-                + " " +
-                (messages.getSender().getLastName() != null ? messages.getSender().getLastName() : "");
-        String receiverName = (messages.getReceiver().getFirstName() != null ? messages.getReceiver().getFirstName() : "")
-                + " " +
-                (messages.getReceiver().getLastName() != null ? messages.getReceiver().getLastName() : "");
+        this.receiverName = NameUtils.formatFullName(messages.getReceiver().getFirstName(), messages.getReceiver().getLastName());
+        this.senderName = NameUtils.formatFullName(messages.getSender().getFirstName(), messages.getSender().getLastName());
         this.receiverId = messages.getReceiver().getUserId();
         this.conversationId = messages.getConversationId();
         this.content = messages.getContent();
         this.sentAt = messages.getSentAt();
     }
+
+    public MessagesModel(MessagesProjection messages) {
+        this.messageId = messages.getMessageId();
+        this.uMessageId = messages.getUMessageId();
+        this.senderId = messages.getSenderId();
+        this.receiverId = messages.getReceiverId();
+        this.receiverName = NameUtils.formatFullName(messages.getReceiverFirstName(), messages.getReceiverLastName());
+        this.senderName = NameUtils.formatFullName(messages.getSenderFirstName(), messages.getSenderLastName());
+        this.conversationId = messages.getConversationId();
+        this.content = messages.getContent();
+        this.sentAt = messages.getSentAt();
+    }
+
 
     public Long getSenderId() {
         return senderId;
@@ -101,5 +114,21 @@ public class MessagesModel {
 
     public void setUMessageId(String uMessageId) {
         this.uMessageId = uMessageId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 }
