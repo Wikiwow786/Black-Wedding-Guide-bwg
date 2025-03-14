@@ -10,4 +10,9 @@ public record AuthModel(String authorization, String userId, String email, Strin
     public String userId() {
         return userId;
     }
+
+    @Override
+    public String toString() {
+        return "AuthModel[userId=" + userId + ", email=" + email + " correlationId=" + correlationId + "]";
+    }
 }

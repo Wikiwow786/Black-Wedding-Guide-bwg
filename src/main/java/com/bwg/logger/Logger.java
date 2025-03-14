@@ -387,6 +387,25 @@ public class Logger {
 //        return message.toString();
 //    }
 
+//    private static String toMessage(Enum<?> code, Map<String, ?> details) {
+//        StringBuilder message = new StringBuilder("ApplicationName"); // Simplified application name
+//        String flowId = "UNKNOWN"; // Simplified flow ID
+//        Long userId = -1L; // Simplified user ID
+//
+//        MDC.put(CODE_FIELD, code.name());
+//        MDC.put(FLOW_ID, flowId);
+//
+//        message.append(" | ").append(flowId).append(" | ").append(userId).append(" | ").append(code.name()).append(" | ");
+//        if (!ObjectUtils.isEmpty(details)) {
+//            details.forEach((key, value) -> {
+//                String sanitiseKey = sanitise(key);
+//                Object sanitiseValue = sanitise(value);
+//                message.append(' ').append(sanitiseKey).append('=').append(escape(sanitiseValue));
+//            });
+//        }
+//        return message.toString();
+//    }
+
     private static String toMessage(Enum<?> code, Map<String, ?> details) {
         StringBuilder message = new StringBuilder("ApplicationName"); // Simplified application name
         String flowId = "UNKNOWN"; // Simplified flow ID
@@ -396,8 +415,12 @@ public class Logger {
         MDC.put(FLOW_ID, flowId);
 
         message.append(" | ").append(flowId).append(" | ").append(userId).append(" | ").append(code.name()).append(" | ");
+
         if (!ObjectUtils.isEmpty(details)) {
             details.forEach((key, value) -> {
+                if ("tokenId".equalsIgnoreCase(key)) {
+                    return; // Skip logging tokenId
+                }
                 String sanitiseKey = sanitise(key);
                 Object sanitiseValue = sanitise(value);
                 message.append(' ').append(sanitiseKey).append('=').append(escape(sanitiseValue));
@@ -405,6 +428,7 @@ public class Logger {
         }
         return message.toString();
     }
+
 
     private static <T> T sanitise(T object) {
         if (object instanceof String)

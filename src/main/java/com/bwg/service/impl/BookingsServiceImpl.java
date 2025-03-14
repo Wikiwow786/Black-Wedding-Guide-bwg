@@ -72,7 +72,7 @@ public class BookingsServiceImpl implements BookingsService {
             // Admins & Owners can fetch any booking
             return bookingsRepository.findById(bookingId)
                     .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
-        }else{
+        } else {
             return bookingsRepository.findByBookingIdAndService_Vendor_User_UserId(bookingId, Long.parseLong(authModel.userId()))
                     .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
         }
