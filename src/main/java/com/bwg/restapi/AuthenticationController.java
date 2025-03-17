@@ -4,7 +4,6 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.UsersModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.UsersService;
-import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

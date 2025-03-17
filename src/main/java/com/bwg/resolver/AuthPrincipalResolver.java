@@ -10,7 +10,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +42,9 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
     private final UsersRepository userRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    @Value("${api.auth.register}")
+    private String registerEndpoint;
+
 
     @Autowired
     public AuthPrincipalResolver(UsersRepository userRepository) {
@@ -57,12 +62,20 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
         String authorization = extractAuthorization(webRequest, parameter.getParameterAnnotation(AuthPrincipal.class));
         String correlationId = retrieveCorrelationId(webRequest,parameter.getParameterAnnotation(AuthPrincipal.class));
+
         if (!StringUtils.hasText(authorization)) {
             CorrelationIdHolder.setCorrelationId(correlationId);
             return new AuthModel(null, null, null, correlationId);
         }
 
         AuthModel authModel = decodeToken(authorization,correlationId);
+        String requestURI = webRequest.getNativeRequest(HttpServletRequest.class).getRequestURI();
+        boolean isRegisterRequest = requestURI.equals(registerEndpoint);
+
+        if (isRegisterRequest) {
+            CorrelationIdHolder.setCorrelationId(correlationId);
+            return authModel;
+        }
         return authenticateUser(authModel);
     }
 
@@ -140,18 +153,12 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
         if (user == null) {
             throw new UnauthorizedException("Unauthorized.");
         }
-
-        if (user != null) {
             String role = "ROLE_" + user.getRole().name().toUpperCase();
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
-
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(authModel, null, authorities)
             );
-
             return new AuthModel(authModel.authorization(),  user.getUserId().toString(), authModel.email(), authModel.correlationId());
-        }
-        return authModel;
     }
 
     private static String decodeBase64UrlSafe(String base64) {

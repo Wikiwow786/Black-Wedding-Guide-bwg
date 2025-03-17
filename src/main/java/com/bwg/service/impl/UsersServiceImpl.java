@@ -3,6 +3,7 @@ package com.bwg.service.impl;
 import com.bwg.domain.QUsers;
 import com.bwg.domain.Services;
 import com.bwg.domain.Users;
+import com.bwg.exception.BadRequestException;
 import com.bwg.exception.ResourceAlreadyExistsException;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.AuthModel;
@@ -11,6 +12,7 @@ import com.bwg.repository.UsersRepository;
 import com.bwg.service.UsersService;
 import com.bwg.util.BeanUtil;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.bwg.logger.Logger.format;
 import static com.bwg.logger.Logger.info;
@@ -62,24 +65,19 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public Users createUser(UsersModel usersModel,AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating User..."), this);
+        String email = Optional.ofNullable(usersModel.getEmail()).orElse(authModel.email());
+
+        if (usersRepository.findByEmailIgnoreCase(email) != null) {
+            throw new ResourceAlreadyExistsException("User already exists with email: " + email);
+        }
+
+        if (usersModel.getRole() == null) {
+            throw new BadRequestException("Role is required.");
+        }
 
         Users users = new Users();
-
-        if (null != usersRepository.findByEmailIgnoreCase(usersModel.getEmail())) {
-            throw new ResourceAlreadyExistsException("User already exists");
-        }
-
-        if(usersModel.getFirstName() == null || usersModel.getLastName() == null || usersModel.getEmail() == null){
-            if (null != usersRepository.findByEmailIgnoreCase(authModel.email())) {
-                throw new ResourceAlreadyExistsException("User already exists");
-            }
-            users = getUserById(Long.parseLong(authModel.userId()), authModel);
-            usersModel.setEmail(users.getEmail());
-            usersModel.setFirstName(users.getFirstName());
-            usersModel.setLastName(users.getLastName());
-        }
-
         BeanUtils.copyProperties(usersModel, users);
+        users.setEmail(email);
         if (usersModel.getPassword() != null && !usersModel.getPassword().isEmpty()) {
             users.setPasswordHash(encodePassword(usersModel.getPassword()));
         }
