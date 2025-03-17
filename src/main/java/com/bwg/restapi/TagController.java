@@ -9,8 +9,10 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,34 +23,36 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @PermitAll
-    public ResponseEntity<Page<TagModel>> getAllTags(@RequestParam(required = false)String search, Pageable pageable) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Page<TagModel>> getAllTags(@RequestParam(required = false)String search,@AuthPrincipal AuthModel authModel, Pageable pageable) {
         return ResponseEntity.ok(tagService.getAllTags(search,pageable));
     }
 
-    @PermitAll
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/{tagId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TagModel> getUserById(@PathVariable(value = "tagId") final Long tagId, @AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(tagService.getTagById(tagId, authModel));
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @PermitAll
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<TagModel> createTag(@RequestBody TagModel tagModel,@AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(tagService.createTag(tagModel,authModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(tagService.createTag(tagModel,authModel));
     }
 
     @PutMapping(value = "/{tagId}/service/{serviceId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TagModel> assignTagToService(@PathVariable Long tagId, @PathVariable Long serviceId) {
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<TagModel> assignTagToService(@PathVariable Long tagId, @PathVariable Long serviceId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(tagService.assignTagToService(tagId,serviceId));
     }
 
     @PutMapping(value = "/{tagId}/category/{categoryId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TagModel> assignTagToCategory(@PathVariable Long tagId, @PathVariable Long categoryId) {
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<TagModel> assignTagToCategory(@PathVariable Long tagId, @PathVariable Long categoryId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(tagService.assignTagToCategory(tagId,categoryId));
     }
 
-    @PermitAll
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping(value = "/{tagId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@PathVariable(value = "tagId") final Long tagId, @AuthPrincipal AuthModel authModel) {
         tagService.deleteTag(tagId, authModel);

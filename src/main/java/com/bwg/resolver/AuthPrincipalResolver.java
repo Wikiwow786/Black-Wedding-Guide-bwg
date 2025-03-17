@@ -58,7 +58,8 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
         String authorization = extractAuthorization(webRequest, parameter.getParameterAnnotation(AuthPrincipal.class));
         String correlationId = retrieveCorrelationId(webRequest,parameter.getParameterAnnotation(AuthPrincipal.class));
         if (!StringUtils.hasText(authorization)) {
-            return new AuthModel(null, null, null, null);
+            CorrelationIdHolder.setCorrelationId(correlationId);
+            return new AuthModel(null, null, null, correlationId);
         }
 
         AuthModel authModel = decodeToken(authorization,correlationId);

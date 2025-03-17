@@ -69,7 +69,6 @@ public class BookingsServiceImpl implements BookingsService {
         if (role.equals(UserRole.ROLE_COUPLE)) {
             return bookingsRepository.findByBookingIdAndUser_UserId(bookingId, Long.parseLong(authModel.userId()));
         } else if (role.equals(UserRole.ROLE_ADMIN) || role.equals(UserRole.ROLE_OWNER)) {
-            // Admins & Owners can fetch any booking
             return bookingsRepository.findById(bookingId)
                     .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
         } else {
