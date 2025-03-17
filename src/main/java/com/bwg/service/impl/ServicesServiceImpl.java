@@ -34,7 +34,7 @@ public class ServicesServiceImpl implements ServicesService {
     private CategoriesRepository categoriesRepository;
 
     @Override
-    public Page<Services> getAllServices(String search, Double priceStart, Double priceEnd, Pageable pageable) {
+    public Page<Services> getAllServices(String search,Long vendorId,Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
         BooleanBuilder filter = new BooleanBuilder();
         if (StringUtils.isNotBlank(search)) {
@@ -46,6 +46,12 @@ public class ServicesServiceImpl implements ServicesService {
         }
         if (priceEnd != null) {
             filter.and(QServices.services.priceMax.loe(priceEnd));
+        }
+        if(vendorId != null){
+            filter.and(QServices.services.vendor.vendorId.eq(vendorId));
+        }
+        if(categoryId != null){
+            filter.and(QServices.services.category.categoryId.eq(categoryId));
         }
         return servicesRepository.findAll(filter, pageable);
     }

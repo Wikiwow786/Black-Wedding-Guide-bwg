@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ServicesService {
 
-    Page<Services> getAllServices(String search, Double priceStart, Double priceEnd, Pageable pageable);
+    Page<Services> getAllServices(String search,Long vendorId,Long categoryId, Double priceStart, Double priceEnd, Pageable pageable);
 
     Services getServiceById(Long serviceId);
 
