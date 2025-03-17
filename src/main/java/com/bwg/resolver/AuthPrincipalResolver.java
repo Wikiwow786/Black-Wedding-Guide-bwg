@@ -35,6 +35,10 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+import static com.bwg.logger.Logger.format;
+import static com.bwg.logger.Logger.info;
+import static com.bwg.logger.LoggingEvent.LOG_SERVICE_OR_REPOSITORY;
+
 public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
     private static final String GOOGLE_PUBLIC_KEYS_URL =
@@ -71,6 +75,8 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
         AuthModel authModel = decodeToken(authorization,correlationId);
         String requestURI = webRequest.getNativeRequest(HttpServletRequest.class).getRequestURI();
         boolean isRegisterRequest = requestURI.equals(registerEndpoint);
+        info(LOG_SERVICE_OR_REPOSITORY, format("Register end point " + registerEndpoint), this);
+
 
         if (isRegisterRequest) {
             CorrelationIdHolder.setCorrelationId(correlationId);
