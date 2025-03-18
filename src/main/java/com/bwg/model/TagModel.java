@@ -30,9 +30,11 @@ public class TagModel {
         this.updatedAt = tag.getUpdatedAt();
     }
 
-    public TagModel(Long tagId, String name) {
+    public TagModel(Long tagId, String name,String status, OffsetDateTime createdAt) {
         this.tagId = tagId;
         this.name = name;
+        this.status = status;
+        this.createdAt = createdAt;
     }
 
     public Long getTagId() {

@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/categories")
 public class CategoriesController {
@@ -31,20 +29,20 @@ public class CategoriesController {
     @PermitAll
     @GetMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> getCategoriesById(@PathVariable(value = "categoryId") final Long categoryId, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new CategoriesModel(categoriesService.getCategoryById(categoryId)));
+        return ResponseEntity.ok(categoriesService.getCategoryById(categoryId));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> createCategory(@RequestBody CategoriesModel categoriesModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new CategoriesModel(categoriesService.createCategory(categoriesModel)));
+        return ResponseEntity.ok(categoriesService.createCategory(categoriesModel));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> updateCategory(@PathVariable(value = "categoryId") final Long categoryId,
                                                           @RequestBody CategoriesModel categoriesModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new CategoriesModel(categoriesService.updateCategory(categoryId, categoriesModel)));
+        return ResponseEntity.ok(categoriesService.updateCategory(categoryId, categoriesModel));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

@@ -63,6 +63,13 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public Users getCurrentUser(AuthModel authModel) {
+        info(LOG_SERVICE_OR_REPOSITORY, "Fetching Current user", authModel.userId());
+        return usersRepository.findById(Long.parseLong(authModel.userId()))
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
     public Users createUser(UsersModel usersModel,AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating User..."), this);
         String email = Optional.ofNullable(usersModel.getEmail()).orElse(authModel.email());

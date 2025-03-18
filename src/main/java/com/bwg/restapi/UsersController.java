@@ -32,6 +32,12 @@ public class UsersController {
         return ResponseEntity.ok(new UsersModel(usersService.getUserById(userId, authModel)));
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/currentUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UsersModel> fetchCurrentUser(@AuthPrincipal AuthModel authModel) {
+        return ResponseEntity.ok(new UsersModel(usersService.getCurrentUser(authModel)));
+    }
+
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @PutMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@PathVariable(value = "userId") final Long userId,

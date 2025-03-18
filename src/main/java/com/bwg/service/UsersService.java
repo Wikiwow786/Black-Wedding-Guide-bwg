@@ -13,6 +13,8 @@ public interface UsersService {
 
     Users getUserById(Long userId, AuthModel authModel);
 
+    Users getCurrentUser(AuthModel authModel);
+
     Users createUser(UsersModel usersModel,AuthModel authModel);
 
     Users updateUser(Long userId, UsersModel usersModel);
