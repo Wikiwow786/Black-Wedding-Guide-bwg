@@ -1,13 +1,19 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Payments;
+import com.bwg.domain.QBookings;
 import com.bwg.domain.QPayments;
+import com.bwg.domain.QVendors;
+import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.exception.UnauthorizedException;
+import com.bwg.model.AuthModel;
 import com.bwg.model.PaymentsModel;
 import com.bwg.repository.BookingsRepository;
 import com.bwg.repository.PaymentsRepository;
 import com.bwg.service.PaymentsService;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +39,16 @@ public class PaymentsServiceImpl implements PaymentsService {
     private BookingsRepository bookingsRepository;
 
     @Override
-    public Page<Payments> getAllPayments(String search,Pageable pageable) {
+    public Page<Payments> getAllPayments(String search, Pageable pageable, String userRole, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Payments", this);
         BooleanBuilder filter = new BooleanBuilder();
-        if(StringUtils.isNotBlank(search)){
+
+        applyRoleFilter(filter, Long.parseLong(authModel.userId()), userRole);
+
+        if (StringUtils.isNotBlank(search)) {
             filter.and(QPayments.payments.currency.containsIgnoreCase(search));
         }
-        return paymentsRepository.findAll(filter,pageable);
+        return paymentsRepository.findAll(filter, pageable);
     }
 
     @Override
@@ -77,5 +86,16 @@ public class PaymentsServiceImpl implements PaymentsService {
 
         return paymentsRepository.save(payment);
 
+    }
+
+    private void applyRoleFilter(BooleanBuilder filter, Long userId, String userRole) {
+        UserRole role = UserRole.fromString(userRole);
+
+        switch (role) {
+            case ROLE_OWNER -> filter.and(QPayments.payments.booking.user.userId.eq(userId));
+            case ROLE_ADMIN -> {
+            }
+            default -> throw new UnauthorizedException("Unauthorized Role: " + userRole);
+        }
     }
 }

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.bwg.util.RoleUtil.extractUserRole;
+
 @RestController
 @RequestMapping("/payments")
 public class PaymentsController {
@@ -26,8 +28,9 @@ public class PaymentsController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<PaymentsModel>> getAllPayments(@RequestParam(required = false)String search,@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(paymentsService.getAllPayments(search,pageable).map(PaymentsModel::new));
+    public ResponseEntity<Page<PaymentsModel>> getAllPayments(@RequestParam(required = false) String search, Pageable pageable, @AuthPrincipal AuthModel authModel) {
+        String userRole = extractUserRole();
+        return ResponseEntity.ok(paymentsService.getAllPayments(search, pageable, userRole, authModel).map(PaymentsModel::new));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

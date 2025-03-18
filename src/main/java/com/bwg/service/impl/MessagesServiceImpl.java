@@ -52,13 +52,13 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public Messages createMessage(MessagesModel messagesModel) {
+    public Messages createMessage(MessagesModel messagesModel, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating Message..."), this);
 
         Messages messages = new Messages();
 
         BeanUtils.copyProperties(messagesModel, messages);
-        messages.setSender(usersRepository.findById(messagesModel.getSenderId())
+        messages.setSender(usersRepository.findById(Long.parseLong(authModel.userId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Sender not found")));
         messages.setReceiver(usersRepository.findById(messagesModel.getReceiverId())
                 .orElseThrow(() -> new ResourceNotFoundException("Receiver not found")));

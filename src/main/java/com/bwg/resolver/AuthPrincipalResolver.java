@@ -158,7 +158,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
         Users user = userRepository.findByEmailIgnoreCase(authModel.email());
         CorrelationIdHolder.setCorrelationId(authModel.correlationId());
         if (user == null) {
-            throw new ResourceNotFoundException("User not found for the email extracted from JWT token.");
+            throw new ResourceNotFoundException("User not found for this email");
         }
             String role = "ROLE_" + user.getRole().name().toUpperCase();
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.bwg.util.RoleUtil.extractUserRole;
+
 @RestController
 @RequestMapping("/messages")
 public class MessagesController {
@@ -24,19 +26,19 @@ public class MessagesController {
     @Autowired
     private MessagesService messagesService;
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_COUPLE')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<MessagesModel>> getAllMessages(@RequestParam(required = false)String search,@RequestParam(required = false)String conversationId, Pageable pageable, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(messagesService.getAllMessages(search,conversationId,authModel,pageable));
+    public ResponseEntity<Page<MessagesModel>> getAllMessages(@RequestParam(required = false) String search, @RequestParam(required = false) String conversationId, Pageable pageable, @AuthPrincipal AuthModel authModel) {
+        return ResponseEntity.ok(messagesService.getAllMessages(search, conversationId, authModel, pageable));
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_COUPLE')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagesModel(messagesService.createMessage(messagesModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagesModel(messagesService.createMessage(messagesModel, authModel)));
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_COUPLE')")
     @GetMapping(value = "/conversation/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MessagesModel>> getAllMessagesByUserId(@PathVariable(value = "userId") final Long userId, @AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(messagesService.getAllMessagesByUserId(userId).stream().map(MessagesModel::new).toList());
