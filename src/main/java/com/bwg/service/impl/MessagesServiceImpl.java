@@ -1,8 +1,6 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Messages;
-import com.bwg.domain.Payments;
-import com.bwg.domain.QMessages;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.AuthModel;
 import com.bwg.model.MessagesModel;
@@ -10,9 +8,6 @@ import com.bwg.projection.MessagesProjection;
 import com.bwg.repository.MessagesRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.MessagesService;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -1,9 +1,7 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Payments;
-import com.bwg.domain.QBookings;
 import com.bwg.domain.QPayments;
-import com.bwg.domain.QVendors;
 import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.exception.UnauthorizedException;
@@ -13,7 +11,6 @@ import com.bwg.repository.BookingsRepository;
 import com.bwg.repository.PaymentsRepository;
 import com.bwg.service.PaymentsService;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.JPAExpressions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
