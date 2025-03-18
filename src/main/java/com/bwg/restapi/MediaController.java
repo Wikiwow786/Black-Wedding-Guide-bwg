@@ -7,6 +7,7 @@ import com.bwg.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,13 +36,13 @@ public class MediaController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MediaModel> createMedia(@RequestBody MediaModel mediaModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new MediaModel(mediaService.createMedia(mediaModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MediaModel(mediaService.createMedia(mediaModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
     @DeleteMapping(value = "/{mediaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteMedia(@PathVariable(value = "mediaId") final Long mediaId, @AuthPrincipal AuthModel authModel) {
         mediaService.deleteMedia(mediaId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

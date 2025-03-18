@@ -8,6 +8,8 @@ import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +39,7 @@ public class PaymentsController {
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaymentsModel> createPayment(@RequestBody PaymentsModel paymentsModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new PaymentsModel(paymentsService.createPayment(paymentsModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new PaymentsModel(paymentsService.createPayment(paymentsModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

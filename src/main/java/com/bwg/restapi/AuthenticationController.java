@@ -5,6 +5,7 @@ import com.bwg.model.UsersModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,6 @@ public class AuthenticationController {
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@RequestBody UsersModel usersModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new UsersModel(userService.createUser(usersModel, authModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsersModel(userService.createUser(usersModel, authModel)));
     }
 }

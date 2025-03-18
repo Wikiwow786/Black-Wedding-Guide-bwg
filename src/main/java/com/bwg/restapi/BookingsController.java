@@ -8,6 +8,7 @@ import com.bwg.service.BookingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,7 +41,7 @@ public class BookingsController {
     @PreAuthorize("hasAuthority('ROLE_COUPLE')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookingsModel> createBooking(@RequestBody BookingsModel bookingsModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new BookingsModel(bookingsService.createBooking(bookingsModel, authModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BookingsModel(bookingsService.createBooking(bookingsModel, authModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")
@@ -54,6 +55,6 @@ public class BookingsController {
     @DeleteMapping(value = "/{bookingId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBooking(@PathVariable(value = "bookingId") final Long bookingId, @AuthPrincipal AuthModel authModel) {
         bookingsService.deleteBooking(bookingId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

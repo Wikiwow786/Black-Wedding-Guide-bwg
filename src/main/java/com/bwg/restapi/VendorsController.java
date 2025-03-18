@@ -11,6 +11,7 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -49,7 +50,7 @@ public class VendorsController {
     @PreAuthorize("hasAuthority('ROLE_VENDOR')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VendorsModel> createVendor(@RequestBody VendorsModel vendorsModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new VendorsModel(vendorsService.createVendor(vendorsModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new VendorsModel(vendorsService.createVendor(vendorsModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")

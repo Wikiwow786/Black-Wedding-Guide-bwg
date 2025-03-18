@@ -9,6 +9,7 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +33,7 @@ public class MessagesController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new MessagesModel(messagesService.createMessage(messagesModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagesModel(messagesService.createMessage(messagesModel)));
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
