@@ -8,6 +8,7 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +36,7 @@ public class CategoriesController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriesModel> createCategory(@RequestBody CategoriesModel categoriesModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(categoriesService.createCategory(categoriesModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoriesService.createCategory(categoriesModel));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -49,6 +50,6 @@ public class CategoriesController {
     @DeleteMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteCategory(@PathVariable(value = "categoryId") final Long categoryId, @AuthPrincipal AuthModel authModel) {
         categoriesService.deleteCategory(categoryId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

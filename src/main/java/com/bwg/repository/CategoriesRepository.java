@@ -35,6 +35,8 @@ public interface CategoriesRepository extends JpaRepository<Categories, Long>, Q
     "WHERE c.categoryId = :categoryId")
     CategoriesProjection findCategoryById(@Param("categoryId") Long categoryId);
 
+    Categories findByCategoryNameIgnoreCase(String categoryName);
+
 
 
 

@@ -4,7 +4,6 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.MediaModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.MediaService;
-import com.bwg.util.CorrelationIdHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/media")

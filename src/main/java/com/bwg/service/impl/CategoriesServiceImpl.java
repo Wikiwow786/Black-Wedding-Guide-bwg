@@ -1,6 +1,7 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.Categories;
+import com.bwg.exception.ResourceAlreadyExistsException;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.mapper.CategoriesMapper;
 import com.bwg.model.CategoriesModel;
@@ -94,6 +95,9 @@ public class CategoriesServiceImpl implements CategoriesService {
     public CategoriesModel createCategory(CategoriesModel categoriesModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating Category..."), this);
 
+        if(null != categoriesRepository.findByCategoryNameIgnoreCase(categoriesModel.categoryName())){
+            throw new ResourceAlreadyExistsException("Category name already exists.");
+        }
         Categories categories = new Categories();
 
         BeanUtils.copyProperties(categoriesModel, categories);
