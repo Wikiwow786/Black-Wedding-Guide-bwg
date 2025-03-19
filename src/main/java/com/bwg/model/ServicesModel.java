@@ -2,17 +2,10 @@ package com.bwg.model;
 
 import com.bwg.config.OffsetDateTimeCustomSerializer;
 import com.bwg.domain.Services;
-import com.bwg.domain.Tag;
-import com.bwg.exception.ResourceNotFoundException;
-import com.bwg.repository.ServicesRepository;
-import com.bwg.util.BeanUtil;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 
 import java.time.OffsetDateTime;
