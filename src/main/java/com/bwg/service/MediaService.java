@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface MediaService {
-    Page<Media> getAllMedia(String search,Long entityId,Pageable pageable);
+    Page<Media> getAllMedia(String search, Long entityId, Pageable pageable);
 
     Media getMedia(Long mediaId);
 

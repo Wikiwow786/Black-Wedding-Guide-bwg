@@ -9,13 +9,13 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface UsersService {
-    Page<Users> getAllUsers(String search,Long userId,Long vendorId,Pageable pageable);
+    Page<Users> getAllUsers(String search, Long userId, Long vendorId, Pageable pageable);
 
     Users getUserById(Long userId, AuthModel authModel);
 
     Users getCurrentUser(AuthModel authModel);
 
-    Users createUser(UsersModel usersModel,AuthModel authModel);
+    Users createUser(UsersModel usersModel, AuthModel authModel);
 
     Users updateUser(Long userId, UsersModel usersModel);
 

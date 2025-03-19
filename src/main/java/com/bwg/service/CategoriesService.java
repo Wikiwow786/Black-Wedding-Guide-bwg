@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CategoriesService {
-    Page<CategoriesModel> getAllCategories(String search,Pageable pageable);
+    Page<CategoriesModel> getAllCategories(String search, Pageable pageable);
 
     CategoriesModel getCategoryById(Long categoryId);
 
