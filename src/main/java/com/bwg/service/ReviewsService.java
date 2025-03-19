@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ReviewsService {
-    Page<Reviews> getAllReviews(Integer rating,Pageable pageable);
+    Page<Reviews> getAllReviews(Integer rating, List<Long> serviceId, Pageable pageable);
 
     Reviews getReviewById(Long reviewId);
 

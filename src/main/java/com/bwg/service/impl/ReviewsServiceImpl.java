@@ -44,13 +44,16 @@ public class ReviewsServiceImpl implements ReviewsService {
     private BookingsRepository bookingsRepository;
 
     @Override
-    public Page<Reviews> getAllReviews(Integer rating,Pageable pageable) {
+    public Page<Reviews> getAllReviews(Integer rating, List<Long> serviceId, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Reviews", this);
         BooleanBuilder filter = new BooleanBuilder();
-        if(rating != null){
+        if (rating != null) {
             filter.and(QReviews.reviews.rating.eq(rating));
         }
-        return reviewsRepository.findAll(filter,pageable);
+        if (rating != null) {
+            filter.and(QReviews.reviews.service.serviceId.in(serviceId));
+        }
+        return reviewsRepository.findAll(filter, pageable);
     }
 
     @Override
@@ -68,7 +71,7 @@ public class ReviewsServiceImpl implements ReviewsService {
 
         var booking = bookingsRepository.findByUser_UserIdAndService_ServiceId(reviewsModel.getUserId(), reviewsModel.getServiceId());
 
-        if (booking != null && booking.getStatus().equals(Bookings.BookingStatus.completed)){
+        if (booking != null && booking.getStatus().equals(Bookings.BookingStatus.completed)) {
             BeanUtils.copyProperties(reviewsModel, reviews);
             reviews.setUser(usersRepository.findById(reviewsModel.getUserId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found")));
@@ -77,7 +80,7 @@ public class ReviewsServiceImpl implements ReviewsService {
 
             reviews.setCreatedAt(OffsetDateTime.now());
             return reviewsRepository.save(reviews);
-        }else{
+        } else {
             throw new ForbiddenException("Booking not found or not completed");
         }
     }

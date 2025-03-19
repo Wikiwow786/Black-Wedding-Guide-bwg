@@ -23,6 +23,7 @@ public class ReviewsModel {
     private String uReviewId;
     private Long userId;
     private String userName;
+    private String profilePhotoUrl;
     private Long serviceId;
     private Integer rating;
     private String comment;
@@ -39,6 +40,7 @@ public class ReviewsModel {
         this.userName = (reviews.getUser().getFirstName() != null ? reviews.getUser().getFirstName() : "")
                 + " " +
                 (reviews.getUser().getLastName() != null ? reviews.getUser().getLastName() : "");
+        this.profilePhotoUrl = reviews.getUser().getProfilePhotoUrl();
         this.serviceId = reviews.getService().getServiceId();
         this.rating = reviews.getRating();
         this.comment = reviews.getComment();
@@ -107,5 +109,17 @@ public class ReviewsModel {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setuReviewId(String uReviewId) {
+        this.uReviewId = uReviewId;
+    }
+
+    public String getProfilePhotoUrl() {
+        return profilePhotoUrl;
+    }
+
+    public void setProfilePhotoUrl(String profilePhotoUrl) {
+        this.profilePhotoUrl = profilePhotoUrl;
     }
 }

@@ -20,7 +20,12 @@ public class ServicesModel {
     @JsonIgnore
     private String uServiceId;
     private Long vendorId;
+    private String vendorName;
+    private String vendorLocation;
+    private Integer vendorTotalReviews;
+    private Double vendorRating;
     private Long categoryId;
+    private String categoryName;
     private String serviceName;
     private String description;
     private Double priceMin;
@@ -42,8 +47,20 @@ public class ServicesModel {
     public ServicesModel(Services services) {
         this.serviceId = services.getServiceId();
         this.uServiceId = services.getUServiceId();
-        this.vendorId = services.getVendor().getVendorId();
-        this.categoryId = services.getCategory().getCategoryId();
+        this.vendorId = !ObjectUtils.isEmpty(services.getVendor()) ?
+                services.getVendor().getVendorId() : null;
+        this.vendorName = !ObjectUtils.isEmpty(services.getVendor()) ?
+                services.getVendor().getBusinessName() : null;
+        this.vendorLocation = !ObjectUtils.isEmpty(services.getVendor()) ?
+                services.getVendor().getLocation() : null;
+        this.vendorTotalReviews = !ObjectUtils.isEmpty(services.getVendor()) ?
+                services.getVendor().getTotalReviews() : null;
+        this.vendorRating = !ObjectUtils.isEmpty(services.getVendor()) ?
+                services.getVendor().getRating() : null;
+        this.categoryId = !ObjectUtils.isEmpty(services.getCategory()) ?
+                services.getCategory().getCategoryId() : null;
+        this.categoryName = !ObjectUtils.isEmpty(services.getCategory()) ?
+                services.getCategory().getCategoryName() : null;
         this.serviceName = services.getServiceName();
         this.description = services.getDescription();
         this.priceMin = services.getPriceMin();
@@ -179,5 +196,53 @@ public class ServicesModel {
 
     public void setTags(Set<TagModel> tags) {
         this.tags = tags;
+    }
+
+    public Integer getVendorTotalReviews() {
+        return vendorTotalReviews;
+    }
+
+    public void setVendorTotalReviews(Integer vendorTotalReviews) {
+        this.vendorTotalReviews = vendorTotalReviews;
+    }
+
+    public Double getVendorRating() {
+        return vendorRating;
+    }
+
+    public void setVendorRating(Double vendorRating) {
+        this.vendorRating = vendorRating;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getVendorLocation() {
+        return vendorLocation;
+    }
+
+    public void setVendorLocation(String vendorLocation) {
+        this.vendorLocation = vendorLocation;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public String getuServiceId() {
+        return uServiceId;
+    }
+
+    public void setuServiceId(String uServiceId) {
+        this.uServiceId = uServiceId;
     }
 }
