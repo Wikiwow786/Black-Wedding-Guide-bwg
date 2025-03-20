@@ -40,18 +40,23 @@ public class ServicesServiceImpl implements ServicesService {
         if (StringUtils.isNotBlank(search)) {
             filter.and(QServices.services.category.categoryName.containsIgnoreCase(search));
         }
+
         if(StringUtils.isNotBlank(tagName)){
             filter.and(QServices.services.tags.any().name.containsIgnoreCase(tagName));
         }
+
         if (priceStart != null) {
             filter.and(QServices.services.priceMin.goe(priceStart));
         }
+
         if (priceEnd != null) {
             filter.and(QServices.services.priceMax.loe(priceEnd));
         }
+
         if (vendorId != null) {
             filter.and(QServices.services.vendor.vendorId.eq(vendorId));
         }
+
         if (categoryId != null) {
             filter.and(QServices.services.category.categoryId.eq(categoryId));
         }
