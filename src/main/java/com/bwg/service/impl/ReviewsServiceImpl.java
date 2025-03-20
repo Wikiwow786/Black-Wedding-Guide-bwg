@@ -50,7 +50,7 @@ public class ReviewsServiceImpl implements ReviewsService {
         if (rating != null) {
             filter.and(QReviews.reviews.rating.eq(rating));
         }
-        if (rating != null) {
+        if (serviceId != null && !serviceId.isEmpty()) {
             filter.and(QReviews.reviews.service.serviceId.in(serviceId));
         }
         return reviewsRepository.findAll(filter, pageable);

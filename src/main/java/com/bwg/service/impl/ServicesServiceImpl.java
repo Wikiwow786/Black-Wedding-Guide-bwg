@@ -78,8 +78,10 @@ public class ServicesServiceImpl implements ServicesService {
 
         BeanUtils.copyProperties(servicesModel, services);
 
-        services.setVendor(vendorsRepository.findById(servicesModel.getVendorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found")));
+        if(servicesModel.getVendorId() != null) {
+            services.setVendor(vendorsRepository.findById(servicesModel.getVendorId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Vendor not found")));
+        }
         services.setCategory(categoriesRepository.findById(servicesModel.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
         services.setCreatedAt(OffsetDateTime.now());

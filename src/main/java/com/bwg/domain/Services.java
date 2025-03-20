@@ -23,7 +23,7 @@ public class Services {
     private String uServiceId;
 
     @ManyToOne
-    @JoinColumn(name = "vendor_id", nullable = false)
+    @JoinColumn(name = "vendor_id")
     private Vendors vendor;
 
     @ManyToOne
