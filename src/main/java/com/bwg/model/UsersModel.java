@@ -32,7 +32,7 @@ public class UsersModel {
     private OffsetDateTime createdAt;
     @JsonIgnore
     private OffsetDateTime updatedAt;
-    @JsonIgnore
+
     private Long vendorId;
     @JsonIgnore
     private List<BookingsModel> bookingsModel;

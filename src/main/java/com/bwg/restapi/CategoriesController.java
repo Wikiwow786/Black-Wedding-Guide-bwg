@@ -23,8 +23,8 @@ public class CategoriesController {
 
     @PermitAll
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<CategoriesModel>> getAllCategories(@RequestParam(required = false) String search,@AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(categoriesService.getAllCategories(search,pageable));
+    public ResponseEntity<Page<CategoriesModel>> getAllCategories(@RequestParam(required = false) String search,@RequestParam(required = false) String tagName,@AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(categoriesService.getAllCategories(search,tagName,pageable));
     }
 
     @PermitAll

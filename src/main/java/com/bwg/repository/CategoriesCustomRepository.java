@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CategoriesCustomRepository {
-    Page<CategoriesModel> fetchCategoriesWithServicesAndTags(String search, Pageable pageable);
+    Page<CategoriesModel> fetchCategoriesWithServicesAndTags(String search,String tagName, Pageable pageable);
 }

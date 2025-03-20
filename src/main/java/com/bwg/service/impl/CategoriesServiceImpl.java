@@ -28,9 +28,9 @@ public class CategoriesServiceImpl implements CategoriesService {
 
 
     @Override
-    public Page<CategoriesModel> getAllCategories(String search, Pageable pageable) {
+    public Page<CategoriesModel> getAllCategories(String search,String tagName, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Categories", this);
-        return categoriesRepository.fetchCategoriesWithServicesAndTags(search, pageable);
+        return categoriesRepository.fetchCategoriesWithServicesAndTags(search,tagName, pageable);
     }
 
 

@@ -76,4 +76,16 @@ public class TagModel {
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TagModel tagModel = (TagModel) o;
+        return tagId != null && tagId.equals(tagModel.tagId);
+    }
+
+    @Override
+    public int hashCode() {
+        return tagId != null ? tagId.hashCode() : 0;
+    }
 }
