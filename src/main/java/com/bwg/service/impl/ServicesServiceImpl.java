@@ -38,8 +38,7 @@ public class ServicesServiceImpl implements ServicesService {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
         BooleanBuilder filter = new BooleanBuilder();
         if (StringUtils.isNotBlank(search)) {
-            filter.and(QServices.services.serviceName.containsIgnoreCase(search))
-                    .or(QServices.services.tags.any().name.containsIgnoreCase(search))
+            filter.and(QServices.services.tags.any().name.containsIgnoreCase(search))
                     .or(QServices.services.category.categoryName.containsIgnoreCase(search));
         }
         if (priceStart != null) {
