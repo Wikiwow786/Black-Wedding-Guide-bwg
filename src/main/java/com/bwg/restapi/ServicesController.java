@@ -51,6 +51,7 @@ public class ServicesController {
         return ResponseEntity.ok(new ServicesModel(servicesService.updateService(serviceId, servicesModel)));
     }
 
+
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR_OWNER')")
     @DeleteMapping(value = "/{serviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteService(@PathVariable(value = "serviceId") final Long serviceId, @AuthPrincipal AuthModel authModel) {
