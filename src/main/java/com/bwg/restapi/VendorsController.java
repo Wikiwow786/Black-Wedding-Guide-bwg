@@ -4,8 +4,6 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.VendorsModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.VendorsService;
-import com.bwg.util.CorrelationIdHolder;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,17 +50,17 @@ public class VendorsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new VendorsModel(vendorsService.createVendor(vendorsModel)));
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")
+    @PreAuthorize("isAuthenticated()")
     @PutMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VendorsModel> updateVendor(@PathVariable(value = "vendorId") final Long vendorId,
                                                      @RequestBody VendorsModel vendorsModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new VendorsModel(vendorsService.updateVendor(vendorId, vendorsModel)));
+        return ResponseEntity.ok(new VendorsModel(vendorsService.updateVendor(vendorId, vendorsModel,authModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")
     @DeleteMapping(value = "/{vendorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteVendor(@PathVariable(value = "vendorId") final Long vendorId, @AuthPrincipal AuthModel authModel) {
-        vendorsService.deleteVendor(vendorId);
+        vendorsService.deleteVendor(vendorId,authModel);
         return ResponseEntity.noContent().build();
     }
 }

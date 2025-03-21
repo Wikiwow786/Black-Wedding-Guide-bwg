@@ -9,18 +9,16 @@ import com.bwg.model.VendorsModel;
 import com.bwg.repository.UsersRepository;
 import com.bwg.repository.VendorsRepository;
 import com.bwg.service.VendorsService;
+import com.bwg.util.SecurityUtils;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 
 import static com.bwg.logger.Logger.format;
@@ -73,10 +71,11 @@ public class VendorsServiceImpl implements VendorsService {
     }
 
     @Override
-    public Vendors updateVendor(Long vendorId, VendorsModel vendorsModel) {
+    public Vendors updateVendor(Long vendorId, VendorsModel vendorsModel,AuthModel authModel) {
         Objects.requireNonNull(vendorId, "Vendor ID cannot be null");
 
         info(LOG_SERVICE_OR_REPOSITORY, format("Updating user info for userId {0}", vendorId), this);
+        SecurityUtils.checkOwnerOrVendor(vendorId.toString(),authModel);
 
         var vendor = vendorsRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
@@ -89,8 +88,9 @@ public class VendorsServiceImpl implements VendorsService {
 
     @Override
     @Transactional
-    public void deleteVendor(Long vendorId) {
+    public void deleteVendor(Long vendorId, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Attempting to delete Vendor Id {0} ", vendorId), this);
+        SecurityUtils.checkOwnerOrVendor(vendorId.toString(),authModel);
         var vendor = vendorsRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Not Found"));
         vendorsRepository.delete(vendor);

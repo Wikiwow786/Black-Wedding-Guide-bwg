@@ -11,6 +11,7 @@ import com.bwg.model.UsersModel;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.UsersService;
 import com.bwg.util.BeanUtil;
+import com.bwg.util.SecurityUtils;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public Users getUserById(Long userId, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching User by Id {0}", userId);
+        SecurityUtils.checkOwnerOrAdmin(userId.toString(), authModel);
         return usersRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
@@ -93,11 +96,11 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Users updateUser(Long userId, UsersModel usersModel) {
+    public Users updateUser(Long userId, UsersModel usersModel,AuthModel authModel) {
         Objects.requireNonNull(userId, "User ID cannot be null");
 
         info(LOG_SERVICE_OR_REPOSITORY, format("Updating user info for userId {0}", userId), this);
-
+        SecurityUtils.checkOwnerOrAdmin(userId.toString(), authModel);
         var user = usersRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -110,6 +113,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public void deleteUser(Long userId, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete user information for userId {0} ", userId), this);
+        SecurityUtils.checkOwnerOrAdmin(userId.toString(), authModel);
         Users users = getUserById(userId, authModel);
         usersRepository.delete(users);
     }

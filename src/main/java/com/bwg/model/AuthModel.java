@@ -1,6 +1,6 @@
 package com.bwg.model;
 
-public record AuthModel(String authorization, String userId, String email, String correlationId) {
+public record AuthModel(String authorization, String userId, String email, String correlationId,String role) {
     @Override
     public String correlationId() {
         return correlationId;

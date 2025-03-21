@@ -13,7 +13,7 @@ public interface VendorsService {
 
     Vendors createVendor(VendorsModel vendorsModel);
 
-    Vendors updateVendor(Long vendorId, VendorsModel vendorsModel);
+    Vendors updateVendor(Long vendorId, VendorsModel vendorsModel,AuthModel authModel);
 
-    void deleteVendor(Long vendorId);
+    void deleteVendor(Long vendorId,AuthModel authModel);
 }

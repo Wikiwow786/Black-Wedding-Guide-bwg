@@ -27,7 +27,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.annotation.Native;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -70,7 +69,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
         if (!StringUtils.hasText(authorization)) {
             CorrelationIdHolder.setCorrelationId(correlationId);
-            return new AuthModel(null, null, null, correlationId);
+            return new AuthModel(null, null, null, correlationId,null);
         }
 
         AuthModel authModel = decodeToken(authorization,correlationId);
@@ -83,7 +82,8 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
             CorrelationIdHolder.setCorrelationId(correlationId);
             return authModel;
         }
-        return authenticateUser(authModel);
+         return authenticateUser(authModel);
+
     }
 
     private String extractAuthorization(NativeWebRequest webRequest, AuthPrincipal annotation) {
@@ -111,7 +111,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
                     .parseClaimsJws(token)
                     .getBody();
 
-            return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), correlationId);
+            return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), correlationId, null);
         } catch (Exception e) {
             CorrelationIdHolder.setCorrelationId(correlationId);
             throw new UnauthorizedException("Invalid or expired token");
@@ -165,7 +165,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(authModel, null, authorities)
             );
-            return new AuthModel(authModel.authorization(),  user.getUserId().toString(), authModel.email(), authModel.correlationId());
+            return new AuthModel(authModel.authorization(),  user.getUserId().toString(), authModel.email(), authModel.correlationId(),role);
     }
 
     private static String decodeBase64UrlSafe(String base64) {

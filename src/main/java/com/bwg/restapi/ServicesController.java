@@ -38,7 +38,7 @@ public class ServicesController {
         return ResponseEntity.ok(new ServicesModel(servicesService.getServiceById(serviceId)));
     }
 
-    @PreAuthorize("hasAuthority('ROLE_VENDOR')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServicesModel> createService(@RequestBody ServicesModel servicesModel, @AuthPrincipal AuthModel authModel) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ServicesModel(servicesService.createService(servicesModel)));

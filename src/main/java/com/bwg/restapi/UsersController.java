@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -26,7 +27,7 @@ public class UsersController {
         return ResponseEntity.ok(usersService.getAllUsers(search,userId,vendorId,pageable).map(UsersModel::new));
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> getUserById(@PathVariable(value = "userId") final Long userId, @AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new UsersModel(usersService.getUserById(userId, authModel)));
@@ -38,11 +39,11 @@ public class UsersController {
         return ResponseEntity.ok(new UsersModel(usersService.getCurrentUser(authModel)));
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("isAuthenticated()")
     @PutMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsersModel> update(@PathVariable(value = "userId") final Long userId,
                                              @RequestBody UsersModel usersModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new UsersModel(usersService.updateUser(userId, usersModel)));
+        return ResponseEntity.ok(new UsersModel(usersService.updateUser(userId, usersModel,authModel)));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
