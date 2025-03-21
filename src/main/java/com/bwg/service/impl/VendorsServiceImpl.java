@@ -73,7 +73,6 @@ public class VendorsServiceImpl implements VendorsService {
     @Override
     public Vendors updateVendor(Long vendorId, VendorsModel vendorsModel,AuthModel authModel) {
         Objects.requireNonNull(vendorId, "Vendor ID cannot be null");
-
         info(LOG_SERVICE_OR_REPOSITORY, format("Updating user info for userId {0}", vendorId), this);
         SecurityUtils.checkOwnerOrVendor(vendorId.toString(),authModel);
 
