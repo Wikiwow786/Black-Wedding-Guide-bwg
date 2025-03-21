@@ -28,6 +28,7 @@ public class ServicesModel {
     private String categoryName;
     private String serviceName;
     private String description;
+    private String location;
     private Double priceMin;
     private Double priceMax;
     private String availability;
@@ -62,6 +63,7 @@ public class ServicesModel {
         this.categoryName = !ObjectUtils.isEmpty(services.getCategory()) ?
                 services.getCategory().getCategoryName() : null;
         this.serviceName = services.getServiceName();
+        this.location = services.getLocation();
         this.description = services.getDescription();
         this.priceMin = services.getPriceMin();
         this.priceMax = services.getPriceMax();
@@ -244,5 +246,13 @@ public class ServicesModel {
 
     public void setuServiceId(String uServiceId) {
         this.uServiceId = uServiceId;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

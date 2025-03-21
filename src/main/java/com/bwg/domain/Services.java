@@ -45,6 +45,9 @@ public class Services {
     @Column(name = "availability", length = 100)
     private String availability;
 
+    @Column(name = "location", length = 255)
+    private String location;
+
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP")
     private OffsetDateTime createdAt;
 
@@ -177,5 +180,13 @@ public class Services {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }
