@@ -1,5 +1,7 @@
 package com.bwg.restapi;
 
+import com.amazonaws.services.docdbelastic.model.Auth;
+import com.bwg.domain.Media;
 import com.bwg.model.AuthModel;
 import com.bwg.model.MediaModel;
 import com.bwg.resolver.AuthPrincipal;
@@ -12,6 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -33,10 +39,35 @@ public class MediaController {
         return ResponseEntity.ok(new MediaModel(mediaService.getMedia(mediaId)));
     }
 
+    @GetMapping("/{mediaId}/download")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable Long mediaId,@AuthPrincipal AuthModel authModel) {
+        return mediaService.downloadFile(mediaId);
+    }
+
+    @GetMapping(value = "/entity/{entityId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<MediaModel>> getEntity(@PathVariable(required = false) Long entityId) {
+        return ResponseEntity.ok(mediaService.getByEntity(entityId));
+    }
+
+    @GetMapping(value = "/url/{mediaId}")
+    public ResponseEntity<Object> getUrl(@PathVariable Long mediaId) {
+        return ResponseEntity.ok(mediaService.getUrl(mediaId));
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MediaModel> createMedia(@RequestBody MediaModel mediaModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MediaModel(mediaService.createMedia(mediaModel)));
+    public ResponseEntity<?> uploadMedia(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(required = false) Long entityId,
+            @RequestParam(required = false) Media.EntityType entityType, @AuthPrincipal AuthModel authModel) {
+
+        try {
+            Media media = mediaService.uploadMedia(entityId, entityType, file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(media);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("File upload failed: " + e.getMessage());
+        }
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")

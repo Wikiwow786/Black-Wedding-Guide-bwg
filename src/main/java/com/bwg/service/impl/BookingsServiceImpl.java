@@ -42,11 +42,11 @@ public class BookingsServiceImpl implements BookingsService {
     private ServicesRepository servicesRepository;
 
     @Override
-    public Page<Bookings> getAllBookings(String search, Bookings.BookingStatus status, AuthModel authModel, String userRole, Pageable pageable) {
+    public Page<Bookings> getAllBookings(String search, Bookings.BookingStatus status, AuthModel authModel,  Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
         BooleanBuilder filter = new BooleanBuilder();
 
-        applyRoleFilter(filter, Long.parseLong(authModel.userId()), userRole);
+        applyRoleFilter(filter, Long.parseLong(authModel.userId()), authModel.role());
 
         if (StringUtils.isNotBlank(search)) {
             filter.and(
@@ -61,9 +61,9 @@ public class BookingsServiceImpl implements BookingsService {
     }
 
     @Override
-    public Bookings getBookingById(Long bookingId, String userRole, AuthModel authModel) {
+    public Bookings getBookingById(Long bookingId, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching User by Id {0}", bookingId);
-        UserRole role = UserRole.fromString(userRole);
+        UserRole role = UserRole.fromString(authModel.role());
 
         if (role.equals(UserRole.ROLE_COUPLE)) {
             return bookingsRepository.findByBookingIdAndUser_UserId(bookingId, Long.parseLong(authModel.userId()));
