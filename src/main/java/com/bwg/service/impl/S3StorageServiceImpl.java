@@ -26,6 +26,8 @@ public class S3StorageServiceImpl implements StorageService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
+    @Value("${s3.folder}")
+    private String s3Folder;
 
     public S3StorageServiceImpl(AmazonS3 s3Client) {
         this.s3Client = s3Client;
@@ -33,20 +35,21 @@ public class S3StorageServiceImpl implements StorageService {
 
     public String uploadFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
+        String s3Key = s3Folder + fileName;
 
-        s3Client.putObject(bucketName, fileName, file.getInputStream(), metadata);
+        s3Client.putObject(bucketName, s3Key, file.getInputStream(), metadata);
 
-        return s3Client.getUrl(bucketName, fileName).toString();
+        return s3Client.getUrl(bucketName, s3Key).toString();
     }
 
     @Override
     public ResponseEntity<byte[]> downloadFile(String fileName) {
         fileName = S3Util.extractFileKey(fileName);
+        String s3Key = s3Folder + fileName;
         try {
-            S3Object s3Object = s3Client.getObject(bucketName, fileName);
+            S3Object s3Object = s3Client.getObject(bucketName, s3Key);
             S3ObjectInputStream inputStream = s3Object.getObjectContent();
             byte[] content = inputStream.readAllBytes();
 
@@ -75,12 +78,13 @@ public class S3StorageServiceImpl implements StorageService {
     @Override
     public String getUrl(String fileName) {
         fileName = S3Util.extractFileKey(fileName);
+        String s3Key = s3Folder + fileName;
         try {
 
             Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 10);
 
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucketName, fileName)
+                    new GeneratePresignedUrlRequest(bucketName, s3Key)
                             .withMethod(HttpMethod.GET)
                             .withExpiration(expiration);
 
