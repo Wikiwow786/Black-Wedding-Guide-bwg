@@ -52,12 +52,17 @@ public class S3StorageServiceImpl implements StorageService {
             S3Object s3Object = s3Client.getObject(bucketName, s3Key);
             S3ObjectInputStream inputStream = s3Object.getObjectContent();
             byte[] content = inputStream.readAllBytes();
+            String contentType = s3Object.getObjectMetadata().getContentType();
+            if (contentType == null || contentType.isBlank()) {
+                contentType = "application/octet-stream";
+            }
 
-            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+            //String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"");
-            headers.add(HttpHeaders.CONTENT_TYPE, s3Object.getObjectMetadata().getContentType());
+            //headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+            headers.add(HttpHeaders.CONTENT_TYPE, contentType);
             headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
             headers.add(HttpHeaders.PRAGMA, "no-cache");
             headers.add(HttpHeaders.EXPIRES, "0");
