@@ -47,7 +47,6 @@ public class CustomSecurityConfig {
         return source;
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(List.of(new NoOpAuthenticationProvider()));
