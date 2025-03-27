@@ -76,6 +76,8 @@ public class UsersServiceImpl implements UsersService {
     public Users createUser(UsersModel usersModel,AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating User..."), this);
         String email = Optional.ofNullable(usersModel.getEmail()).orElse(authModel.email());
+        String firstName = Optional.ofNullable(usersModel.getFirstName()).orElse(authModel.firstName());
+        String lastName = Optional.ofNullable(usersModel.getFirstName()).orElse(authModel.lastName() );
 
         if (usersRepository.findByEmailIgnoreCase(email) != null) {
             throw new ResourceAlreadyExistsException("User already exists with email: " + email);
@@ -88,6 +90,8 @@ public class UsersServiceImpl implements UsersService {
         Users users = new Users();
         BeanUtils.copyProperties(usersModel, users);
         users.setEmail(email);
+        users.setFirstName(firstName);
+        users.setLastName(lastName);
         if (usersModel.getPassword() != null && !usersModel.getPassword().isEmpty()) {
             users.setPasswordHash(encodePassword(usersModel.getPassword()));
         }

@@ -69,7 +69,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
 
         if (!StringUtils.hasText(authorization)) {
             CorrelationIdHolder.setCorrelationId(correlationId);
-            return new AuthModel(null, null, null, correlationId,null);
+            return new AuthModel(null, null, null, correlationId,null,null,null);
         }
 
         AuthModel authModel = decodeToken(authorization,correlationId);
@@ -111,7 +111,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
                     .parseClaimsJws(token)
                     .getBody();
 
-            return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), correlationId, null);
+            return new AuthModel(token, claims.get("user_id", String.class), claims.get("email", String.class), correlationId, null,claims.get("first_name", String.class),claims.get("last_name", String.class));
         } catch (Exception e) {
             CorrelationIdHolder.setCorrelationId(correlationId);
             throw new UnauthorizedException("Invalid or expired token");
@@ -165,7 +165,7 @@ public class AuthPrincipalResolver implements HandlerMethodArgumentResolver {
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(authModel, null, authorities)
             );
-            return new AuthModel(authModel.authorization(),  user.getUserId().toString(), authModel.email(), authModel.correlationId(),role);
+            return new AuthModel(authModel.authorization(),  user.getUserId().toString(), authModel.email(), authModel.correlationId(),role,user.getFirstName(),user.getLastName());
     }
 
     private static String decodeBase64UrlSafe(String base64) {
