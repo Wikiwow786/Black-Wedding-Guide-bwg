@@ -1,7 +1,6 @@
 package com.bwg.service.impl;
 
 import com.bwg.domain.QUsers;
-import com.bwg.domain.Services;
 import com.bwg.domain.Users;
 import com.bwg.exception.BadRequestException;
 import com.bwg.exception.ResourceAlreadyExistsException;
@@ -10,23 +9,17 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.UsersModel;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.UsersService;
-import com.bwg.util.BeanUtil;
 import com.bwg.util.SecurityUtils;
 import com.querydsl.core.BooleanBuilder;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -77,7 +70,8 @@ public class UsersServiceImpl implements UsersService {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating User..."), this);
         String email = Optional.ofNullable(usersModel.getEmail()).orElse(authModel.email());
         String firstName = Optional.ofNullable(usersModel.getFirstName()).orElse(authModel.firstName());
-        String lastName = Optional.ofNullable(usersModel.getFirstName()).orElse(authModel.lastName() );
+        String lastName = Optional.ofNullable(usersModel.getFirstName()).orElse(authModel.lastName());
+        String profilePicUrl = Optional.ofNullable(usersModel.getProfilePhotoUrl()).orElse(authModel.profilePicUrl());
 
         if (usersRepository.findByEmailIgnoreCase(email) != null) {
             throw new ResourceAlreadyExistsException("User already exists with email: " + email);
@@ -92,6 +86,7 @@ public class UsersServiceImpl implements UsersService {
         users.setEmail(email);
         users.setFirstName(firstName);
         users.setLastName(lastName);
+        users.setProfilePhotoUrl(profilePicUrl);
         if (usersModel.getPassword() != null && !usersModel.getPassword().isEmpty()) {
             users.setPasswordHash(encodePassword(usersModel.getPassword()));
         }
