@@ -25,6 +25,7 @@ public class MediaModel {
     private EntityType entityType;
     private Long entityId;
     private String mediaUrl;
+    private String mediaUri;
     private String thumbnailUrl;
     private String mimeType;
     private String title;
@@ -42,6 +43,7 @@ public class MediaModel {
         this.entityType = media.getEntityType();
         this.entityId = media.getEntityId();
         this.mediaUrl = media.getMediaUrl();
+        this.mediaUri = media.getMediaUri();
         this.thumbnailUrl = media.getThumbnailUrl();
         this.mimeType = media.getMimeType();
         this.title = media.getTitle();
@@ -127,5 +129,13 @@ public class MediaModel {
 
     public void setUMediaId(String uMediaId) {
         this.uMediaId = uMediaId;
+    }
+
+    public String getMediaUri() {
+        return mediaUri;
+    }
+
+    public void setMediaUri(String mediaUri) {
+        this.mediaUri = mediaUri;
     }
 }

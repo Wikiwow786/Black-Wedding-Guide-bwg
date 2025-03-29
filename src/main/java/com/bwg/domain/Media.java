@@ -30,6 +30,9 @@ public class Media {
     @Column(name = "media_url", nullable = false, length = 255)
     private String mediaUrl;
 
+    @Column(name = "media_uri", nullable = true, length = 255)
+    private String mediaUri;
+
     @Column(name = "thumbnail_url", length = 255)
     private String thumbnailUrl;
 
@@ -124,6 +127,14 @@ public class Media {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getMediaUri() {
+        return mediaUri;
+    }
+
+    public void setMediaUri(String mediaUri) {
+        this.mediaUri = mediaUri;
     }
 
     // Enum for EntityType

@@ -239,6 +239,7 @@ CREATE TABLE IF NOT EXISTS bwg.Media (
     entity_type character varying(255) NOT NULL,
     entity_id BIGINT NOT NULL,
     media_url character varying(255) NOT NULL,
+    media_uri character varying(255),
     thumbnail_url VARCHAR(255),
     mime_type VARCHAR(50),
     title VARCHAR(200),
