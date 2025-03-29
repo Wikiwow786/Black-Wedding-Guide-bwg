@@ -5,6 +5,7 @@ import com.bwg.domain.Media.*;
 import com.bwg.domain.Media;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.repository.MediaRepository;
+import com.bwg.service.StorageService;
 import com.bwg.util.BeanUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,6 +27,7 @@ public class MediaModel {
     private Long entityId;
     private String mediaUrl;
     private String mediaUri;
+    private String publicUrl;
     private String thumbnailUrl;
     private String mimeType;
     private String title;
@@ -49,6 +51,7 @@ public class MediaModel {
         this.title = media.getTitle();
         this.createdAt = media.getCreatedAt();
         this.updatedAt = media.getUpdatedAt();
+        this.publicUrl = BeanUtil.getBean(StorageService.class).getUrl(media.getMediaUrl());
     }
 
     public Long getMediaId() {
@@ -137,5 +140,13 @@ public class MediaModel {
 
     public void setMediaUri(String mediaUri) {
         this.mediaUri = mediaUri;
+    }
+
+    public String getPublicUrl() {
+        return publicUrl;
+    }
+
+    public void setPublicUrl(String publicUrl) {
+        this.publicUrl = publicUrl;
     }
 }

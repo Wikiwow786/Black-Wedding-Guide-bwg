@@ -1,6 +1,5 @@
 package com.bwg.restapi;
 
-import com.amazonaws.services.docdbelastic.model.Auth;
 import com.bwg.domain.Media;
 import com.bwg.model.AuthModel;
 import com.bwg.model.MediaModel;
