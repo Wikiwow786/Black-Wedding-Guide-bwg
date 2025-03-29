@@ -95,6 +95,10 @@ public class MediaServiceImpl implements MediaService {
         media.setTitle(title);
         media.setMediaUrl(fileUrl);
         media.setMimeType(file.getContentType());
+        media = mediaRepository.save(media);
+        info(LOG_SERVICE_OR_REPOSITORY, format("created media ID {0} ", media.getMediaId()), this);
+
+        media.setMediaUrl("/media/"+media.getMediaId()+"/download");
 
         return mediaRepository.save(media);
     }
