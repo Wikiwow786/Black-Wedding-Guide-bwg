@@ -34,7 +34,7 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + FilenameUtils.getExtension(file.getOriginalFilename());;
+        String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(file.getOriginalFilename());;
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         String s3Key = s3Folder + fileName;
