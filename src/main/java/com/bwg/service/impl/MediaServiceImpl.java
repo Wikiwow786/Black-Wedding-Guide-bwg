@@ -86,12 +86,13 @@ public class MediaServiceImpl implements MediaService {
         return mediaRepository.save(media);
     }
 
-    public Media uploadMedia(Long entityId, Media.EntityType entityType, MultipartFile file) throws IOException {
+    public Media uploadMedia(Long entityId, String title, Media.EntityType entityType, MultipartFile file) throws IOException {
         String fileUrl = storageService.uploadFile(file);
 
         Media media = new Media();
         media.setEntityId(entityId);
         media.setEntityType(entityType);
+        media.setTitle(title);
         media.setMediaUrl(fileUrl);
         media.setMimeType(file.getContentType());
 

@@ -20,7 +20,7 @@ public interface MediaService {
 
     Media createMedia(MediaModel mediaModel);
 
-    Media uploadMedia(Long entityId, Media.EntityType entityType, MultipartFile file) throws IOException;
+    Media uploadMedia(Long entityId, String title, Media.EntityType entityType, MultipartFile file) throws IOException;
 
     ResponseEntity<byte[]> downloadFile(Long mediaId);
 

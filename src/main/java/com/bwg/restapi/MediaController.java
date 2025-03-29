@@ -60,10 +60,11 @@ public class MediaController {
     public ResponseEntity<?> uploadMedia(
             @RequestParam("file") MultipartFile file,
             @RequestParam(required = false) Long entityId,
+            @RequestParam(required = false) String title,
             @RequestParam(required = false) Media.EntityType entityType, @AuthPrincipal AuthModel authModel) {
 
         try {
-            Media media = mediaService.uploadMedia(entityId, entityType, file);
+            Media media = mediaService.uploadMedia(entityId, title, entityType, file);
             return ResponseEntity.status(HttpStatus.CREATED).body(media);
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("File upload failed: " + e.getMessage());
