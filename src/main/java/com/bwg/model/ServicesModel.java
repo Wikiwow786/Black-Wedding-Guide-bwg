@@ -38,7 +38,6 @@ public class ServicesModel {
     private OffsetDateTime updatedAt;
     @JsonIgnore
     private List<BookingsModel> bookingsModel;
-    @JsonIgnore
     private List<ReviewsModel> reviewsModel;
     private Set<TagModel> tags;
 
