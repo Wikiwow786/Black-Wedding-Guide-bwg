@@ -45,7 +45,7 @@ public class ReviewsServiceImpl implements ReviewsService {
 
     @Override
     public Page<Reviews> getAllReviews(Integer rating, List<Long> serviceId, Pageable pageable) {
-        info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Reviews", this);
+        info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Reviews" + serviceId, this);
         BooleanBuilder filter = new BooleanBuilder();
         if (rating != null) {
             filter.and(QReviews.reviews.rating.eq(rating));
