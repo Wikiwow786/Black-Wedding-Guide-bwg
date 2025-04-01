@@ -48,7 +48,7 @@ public class ReviewsServiceImpl implements ReviewsService {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Reviews" + serviceId, this);
         BooleanBuilder filter = new BooleanBuilder();
         if (rating != null) {
-            filter.and(QReviews.reviews.rating.eq(rating));
+            filter.and(QReviews.reviews.rating.goe(rating));
         }
         if (serviceId != null && !serviceId.isEmpty()) {
             filter.and(QReviews.reviews.service.serviceId.in(serviceId));
