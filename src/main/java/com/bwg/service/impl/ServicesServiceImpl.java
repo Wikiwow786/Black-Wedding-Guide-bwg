@@ -38,7 +38,7 @@ public class ServicesServiceImpl implements ServicesService {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
         BooleanBuilder filter = new BooleanBuilder();
         if (StringUtils.isNotBlank(search)) {
-            filter.and(QServices.services.category.categoryName.containsIgnoreCase(search));
+            filter.and(QServices.services.serviceName.containsIgnoreCase(search));
         }
 
         if(StringUtils.isNotBlank(tagName)){
