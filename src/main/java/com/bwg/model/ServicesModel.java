@@ -3,6 +3,7 @@ package com.bwg.model;
 import com.bwg.config.OffsetDateTimeCustomSerializer;
 import com.bwg.domain.Services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -38,6 +39,7 @@ public class ServicesModel {
     private OffsetDateTime updatedAt;
     @JsonIgnore
     private List<BookingsModel> bookingsModel;
+    @JsonProperty(value = "reviews")
     private List<ReviewsModel> reviewsModel;
     private Set<TagModel> tags;
 

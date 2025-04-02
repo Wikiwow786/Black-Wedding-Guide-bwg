@@ -37,6 +37,7 @@ public class ReviewsModel {
         this.reviewId = reviews.getReviewId();
         this.uReviewId = reviews.getUReviewId();
         this.userId = reviews.getUser().getUserId();
+        this.profilePhotoUrl = reviews.getUser().getProfilePhotoUrl();
         this.userName = (reviews.getUser().getFirstName() != null ? reviews.getUser().getFirstName() : "")
                 + " " +
                 (reviews.getUser().getLastName() != null ? reviews.getUser().getLastName() : "");
