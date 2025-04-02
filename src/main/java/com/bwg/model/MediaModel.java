@@ -28,6 +28,7 @@ public class MediaModel {
     private String mediaUrl;
     private String mediaUri;
     private String publicUrl;
+    private String publicThumbnailUrl;
     private String thumbnailUrl;
     private String mimeType;
     private String title;
@@ -52,6 +53,8 @@ public class MediaModel {
         this.createdAt = media.getCreatedAt();
         this.updatedAt = media.getUpdatedAt();
         this.publicUrl = BeanUtil.getBean(StorageService.class).getUrl(media.getMediaUrl());
+        this.publicThumbnailUrl = BeanUtil.getBean(StorageService.class).getUrl(media.getThumbnailUrl());
+
     }
 
     public Long getMediaId() {
@@ -148,5 +151,13 @@ public class MediaModel {
 
     public void setPublicUrl(String publicUrl) {
         this.publicUrl = publicUrl;
+    }
+
+    public String getPublicThumbnailUrl() {
+        return publicThumbnailUrl;
+    }
+
+    public void setPublicThumbnailUrl(String publicThumbnailUrl) {
+        this.publicThumbnailUrl = publicThumbnailUrl;
     }
 }

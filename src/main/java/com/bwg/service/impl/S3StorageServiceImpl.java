@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
@@ -34,7 +35,7 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(file.getOriginalFilename());;
+        String fileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         String s3Key = s3Folder + fileName;
@@ -57,10 +58,7 @@ public class S3StorageServiceImpl implements StorageService {
                 contentType = "application/octet-stream";
             }
 
-            //String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
-
             HttpHeaders headers = new HttpHeaders();
-            //headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"");
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
             headers.add(HttpHeaders.CONTENT_TYPE, contentType);
             headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
@@ -86,7 +84,7 @@ public class S3StorageServiceImpl implements StorageService {
         String s3Key = s3Folder + fileName;
         try {
 
-            Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 10);
+            Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 60);
 
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucketName, s3Key)
@@ -98,4 +96,18 @@ public class S3StorageServiceImpl implements StorageService {
             throw new RuntimeException("Could not generate  URL for file: " + fileName, e);
         }
     }
+
+
+    @Override
+    public String uploadFile(InputStream inputStream, String fileName, String contentType) throws IOException {
+        String fileKey = s3Folder + fileName;
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(inputStream.available());
+        metadata.setContentType(contentType);
+
+        s3Client.putObject(bucketName, fileKey, inputStream, metadata);
+        return s3Client.getUrl(bucketName, fileKey).toString();
+    }
+
 }

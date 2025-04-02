@@ -88,7 +88,7 @@ public class CategoriesCustomRepositoryImpl implements CategoriesCustomRepositor
             CategoriesModel category = categoriesMap.get(categoryId);
 
             if (row.get("service_id") != null) {
-                category.servicesModel().add(CategoriesMapper.mapServiceFromTuple(row, categoryId));
+                category.services().add(CategoriesMapper.mapServiceFromTuple(row, categoryId));
             }
 
             if (row.get("tag_id") != null) {

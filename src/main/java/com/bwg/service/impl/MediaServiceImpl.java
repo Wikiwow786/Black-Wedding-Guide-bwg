@@ -8,7 +8,9 @@ import com.bwg.repository.MediaRepository;
 import com.bwg.service.MediaService;
 import com.bwg.service.StorageService;
 import com.querydsl.core.BooleanBuilder;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -88,11 +94,16 @@ public class MediaServiceImpl implements MediaService {
 
     public Media uploadMedia(Long entityId, String title, Media.EntityType entityType, MultipartFile file) throws IOException {
         String fileUrl = storageService.uploadFile(file);
+        Pair<ByteArrayInputStream, String> thumbnailData = generateThumbnailStream(file);
+        ByteArrayInputStream thumbInputStream = thumbnailData.getLeft();
+        String thumbnailFileName = thumbnailData.getRight();
+        String thumbnailUrl = storageService.uploadFile(thumbInputStream, thumbnailFileName, "image/jpeg");
 
         Media media = new Media();
         media.setEntityId(entityId);
         media.setEntityType(entityType);
         media.setTitle(title);
+        media.setThumbnailUrl(thumbnailUrl);
         media.setMediaUrl(fileUrl);
         media.setMimeType(file.getContentType());
         media = mediaRepository.save(media);
@@ -115,4 +126,35 @@ public class MediaServiceImpl implements MediaService {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete Media information for Media Id {0} ", mediaId), this);
         mediaRepository.deleteById(mediaId);
     }
+
+    private Pair<ByteArrayInputStream, String> generateThumbnailStream(MultipartFile file) throws IOException {
+        ImageIO.scanForPlugins();
+        try (InputStream originalInputStream = file.getInputStream();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            Thumbnails.of(originalInputStream)
+                    .size(300, 300)
+                    .outputQuality(0.85)
+                    .outputFormat("jpg")
+                    .toOutputStream(outputStream);
+
+            byte[] thumbnailBytes = outputStream.toByteArray();
+            ByteArrayInputStream thumbInputStream = new ByteArrayInputStream(thumbnailBytes);
+
+            String thumbnailFileName = generateThumbnailFileName(file.getOriginalFilename());
+            return Pair.of(thumbInputStream, thumbnailFileName);
+
+        } catch (Exception e) {
+            throw new IOException("Failed to generate thumbnail from file: " + file.getOriginalFilename(), e);
+        }
+    }
+
+
+    private String generateThumbnailFileName(String originalFileName) {
+        int dotIndex = originalFileName.lastIndexOf(".");
+        String baseName = (dotIndex == -1) ? originalFileName : originalFileName.substring(0, dotIndex);
+        baseName = baseName.replaceAll("\\s+", "_");
+        return baseName + "_thumb.jpg";
+    }
+
 }

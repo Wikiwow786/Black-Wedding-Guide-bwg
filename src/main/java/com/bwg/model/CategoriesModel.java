@@ -3,6 +3,7 @@ package com.bwg.model;
 import com.bwg.config.OffsetDateTimeCustomSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,7 +21,6 @@ public record CategoriesModel(
         OffsetDateTime createdAt,
         @JsonIgnore
         OffsetDateTime updatedAt,
-        @JsonIgnore
-        List<ServicesModel> servicesModel,
+        List<ServicesModel> services,
         Set<TagModel> tags
 ) {}

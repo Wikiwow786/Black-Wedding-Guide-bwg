@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.UUID;
 
@@ -38,6 +39,11 @@ public class LocalStorageServiceImpl implements StorageService {
 
     @Override
     public String getUrl(String fileName) {
+        return "";
+    }
+
+    @Override
+    public String uploadFile(InputStream inputStream, String fileName, String contentType) throws IOException {
         return "";
     }
 }
