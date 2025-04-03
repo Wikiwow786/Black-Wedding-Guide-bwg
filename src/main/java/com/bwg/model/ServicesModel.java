@@ -11,6 +11,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -88,6 +89,20 @@ public class ServicesModel {
         this.availability = availability;
         this.categoryId = categoryId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ServicesModel that = (ServicesModel) o;
+        return Objects.equals(serviceId, that.serviceId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(serviceId);
+    }
+
 
     public Long getServiceId() {
         return serviceId;
