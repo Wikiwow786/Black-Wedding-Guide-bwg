@@ -2,6 +2,7 @@ package com.bwg.service.impl;
 
 import com.bwg.domain.Bookmarks;
 import com.bwg.domain.QBookmarks;
+import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.AuthModel;
 import com.bwg.model.BookmarkModel;
@@ -30,6 +31,9 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Override
     public Page<BookmarkModel> getAllBookmarks(String search, AuthModel authModel, Pageable pageable) {
         BooleanBuilder filter = new BooleanBuilder();
+        if(!authModel.role().equalsIgnoreCase(UserRole.ROLE_ADMIN.name())){
+            filter.and(QBookmarks.bookmarks.userId.eq(Long.parseLong(authModel.userId())));
+        }
         if(StringUtils.isNotBlank(search)){
          filter.and(QBookmarks.bookmarks.title.containsIgnoreCase(search));
         }

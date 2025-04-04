@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,28 +21,33 @@ public class BookmarkController {
     @Autowired
     private BookmarkService bookmarkService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<BookmarkModel>> getAllBookmarks(@RequestParam(required = false) String search, @RequestParam(required = false) Bookings.BookingStatus status, @AuthPrincipal AuthModel authModel, Pageable pageable) {
         return ResponseEntity.ok(bookmarkService.getAllBookmarks(search, authModel, pageable));
 
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookmarkModel>> getByUser(@PathVariable Long userId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(bookmarkService.getUserBookmarks(userId,authModel));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookmarkModel> createBookmark(@RequestBody BookmarkModel bookmarkModel,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(bookmarkService.createBookmark(bookmarkModel,authModel));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBookmark(@PathVariable Long id,@AuthPrincipal AuthModel authModel) {
         bookmarkService.deleteBookmark(id);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUserBookmarks(@PathVariable Long userId,@AuthPrincipal AuthModel authModel) {
         bookmarkService.deleteUserBookmarks(userId);
