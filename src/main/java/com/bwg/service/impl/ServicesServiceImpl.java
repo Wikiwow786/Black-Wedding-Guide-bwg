@@ -34,7 +34,7 @@ public class ServicesServiceImpl implements ServicesService {
     private CategoriesRepository categoriesRepository;
 
     @Override
-    public Page<Services> getAllServices(String search,String tagName, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
+    public Page<Services> getAllServices(String search,String tagName,String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
         BooleanBuilder filter = new BooleanBuilder();
         if (StringUtils.isNotBlank(search)) {
@@ -43,6 +43,10 @@ public class ServicesServiceImpl implements ServicesService {
 
         if(StringUtils.isNotBlank(tagName)){
             filter.and(QServices.services.tags.any().name.containsIgnoreCase(tagName));
+        }
+
+        if(StringUtils.isNotBlank(location)){
+            filter.and(QServices.services.location.containsIgnoreCase(location));
         }
 
         if (priceStart != null) {

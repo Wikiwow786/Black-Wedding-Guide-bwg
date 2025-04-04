@@ -30,12 +30,14 @@ public class ServicesController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<ServicesModel>> getAllServices(@RequestParam(required = false) String search,
                                                               @RequestParam(required = false) String tagName,
+                                                              @RequestParam(required = false) String location,
                                                               @RequestParam(required = false) Long vendorId,
                                                               @RequestParam(required = false) Integer rating,
                                                               @RequestParam(required = false) Long categoryId,
                                                               @RequestParam(required = false) Double priceStart,
-                                                              @RequestParam(required = false) Double priceEnd, @AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(servicesService.getAllServices(search,tagName, rating, vendorId, categoryId, priceStart, priceEnd, pageable).map(ServicesModel::new));
+                                                              @RequestParam(required = false) Double priceEnd,
+                                                              @AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(servicesService.getAllServices(search,tagName,location, rating, vendorId, categoryId, priceStart, priceEnd, pageable).map(ServicesModel::new));
     }
 
     @PermitAll

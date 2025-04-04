@@ -1,0 +1,50 @@
+package com.bwg.restapi;
+
+import com.bwg.domain.Bookings;
+import com.bwg.model.AuthModel;
+import com.bwg.model.BookmarkModel;
+import com.bwg.resolver.AuthPrincipal;
+import com.bwg.service.BookmarkService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/bookmarks")
+public class BookmarkController {
+    @Autowired
+    private BookmarkService bookmarkService;
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<BookmarkModel>> getAllBookmarks(@RequestParam(required = false) String search, @RequestParam(required = false) Bookings.BookingStatus status, @AuthPrincipal AuthModel authModel, Pageable pageable) {
+        return ResponseEntity.ok(bookmarkService.getAllBookmarks(search, authModel, pageable));
+
+    }
+
+    @GetMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BookmarkModel>> getByUser(@PathVariable Long userId,@AuthPrincipal AuthModel authModel) {
+        return ResponseEntity.ok(bookmarkService.getUserBookmarks(userId,authModel));
+    }
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BookmarkModel> createBookmark(@RequestBody BookmarkModel bookmarkModel,@AuthPrincipal AuthModel authModel) {
+        return ResponseEntity.ok(bookmarkService.createBookmark(bookmarkModel,authModel));
+    }
+
+    @DeleteMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteBookmark(@PathVariable Long id,@AuthPrincipal AuthModel authModel) {
+        bookmarkService.deleteBookmark(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteUserBookmarks(@PathVariable Long userId,@AuthPrincipal AuthModel authModel) {
+        bookmarkService.deleteUserBookmarks(userId);
+        return ResponseEntity.noContent().build();
+    }
+}
