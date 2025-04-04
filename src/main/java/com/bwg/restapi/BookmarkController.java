@@ -41,14 +41,14 @@ public class BookmarkController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookmarkService.createBookmark(bookmarkModel,authModel));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBookmark(@PathVariable(value = "id") Long id,@AuthPrincipal AuthModel authModel) {
         bookmarkService.deleteBookmark(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUserBookmarks(@PathVariable Long userId,@AuthPrincipal AuthModel authModel) {
         bookmarkService.deleteUserBookmarks(userId);
