@@ -292,10 +292,11 @@ CREATE INDEX idx_category_tags_tag ON bwg.category_tags (tag_id);
 CREATE INDEX idx_category_tags_composite ON bwg.category_tags (category_id, tag_id);
 
 
-CREATE TABLE bookmark (
+CREATE TABLE bwg.bookmarks (
     bookmark_id BIGINT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     title VARCHAR(255),
+    u_bookmark_id varchar(255),
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

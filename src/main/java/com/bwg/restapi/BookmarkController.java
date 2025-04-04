@@ -8,6 +8,7 @@ import com.bwg.service.BookmarkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +38,7 @@ public class BookmarkController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookmarkModel> createBookmark(@RequestBody BookmarkModel bookmarkModel,@AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(bookmarkService.createBookmark(bookmarkModel,authModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookmarkService.createBookmark(bookmarkModel,authModel));
     }
 
     @PreAuthorize("isAuthenticated()")
