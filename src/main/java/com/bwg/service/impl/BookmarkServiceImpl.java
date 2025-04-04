@@ -2,11 +2,13 @@ package com.bwg.service.impl;
 
 import com.bwg.domain.Bookmarks;
 import com.bwg.domain.QBookmarks;
+import com.bwg.domain.Users;
 import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.AuthModel;
 import com.bwg.model.BookmarkModel;
 import com.bwg.repository.BookmarkRepository;
+import com.bwg.repository.UsersRepository;
 import com.bwg.service.BookmarkService;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.transaction.Transactional;
@@ -28,6 +30,8 @@ import static com.bwg.logger.LoggingEvent.LOG_SERVICE_OR_REPOSITORY;
 public class BookmarkServiceImpl implements BookmarkService {
     @Autowired
     private BookmarkRepository bookmarkRepository;
+    @Autowired
+    private UsersRepository usersRepository;
     @Override
     public Page<BookmarkModel> getAllBookmarks(String search, AuthModel authModel, Pageable pageable) {
         BooleanBuilder filter = new BooleanBuilder();
@@ -74,6 +78,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     private Bookmarks assemble(BookmarkModel bookmarkModel, AuthModel authModel){
         Bookmarks bookmarks = new Bookmarks();
+        usersRepository.findById(bookmarkModel.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         BeanUtils.copyProperties(bookmarkModel, bookmarks);
         bookmarks.setCreatedAt(OffsetDateTime.now());
         return bookmarks;

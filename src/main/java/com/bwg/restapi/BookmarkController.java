@@ -23,14 +23,14 @@ public class BookmarkController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<BookmarkModel>> getAllBookmarks(@RequestParam(required = false) String search, @RequestParam(required = false) Bookings.BookingStatus status, @AuthPrincipal AuthModel authModel, Pageable pageable) {
+    public ResponseEntity<Page<BookmarkModel>> getAllBookmarks(@RequestParam(required = false) String search,@AuthPrincipal AuthModel authModel, Pageable pageable) {
         return ResponseEntity.ok(bookmarkService.getAllBookmarks(search, authModel, pageable));
 
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookmarkModel>> getByUser(@PathVariable Long userId,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<List<BookmarkModel>> getByUser(@PathVariable(value = "userId") Long userId,@AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(bookmarkService.getUserBookmarks(userId,authModel));
     }
 
@@ -42,7 +42,7 @@ public class BookmarkController {
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteBookmark(@PathVariable Long id,@AuthPrincipal AuthModel authModel) {
+    public ResponseEntity<Void> deleteBookmark(@PathVariable(value = "id") Long id,@AuthPrincipal AuthModel authModel) {
         bookmarkService.deleteBookmark(id);
         return ResponseEntity.noContent().build();
     }
