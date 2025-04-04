@@ -20,5 +20,5 @@ public interface BookmarkService {
 
     void deleteBookmark(Long bookmarkId);
 
-    void deleteUserBookmarks(Long userId);
+    void deleteUserBookmarks(Long userId,AuthModel authModel);
 }

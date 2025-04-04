@@ -10,6 +10,7 @@ import com.bwg.model.BookmarkModel;
 import com.bwg.repository.BookmarkRepository;
 import com.bwg.repository.UsersRepository;
 import com.bwg.service.BookmarkService;
+import com.bwg.util.SecurityUtils;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +71,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     @Override
     @Transactional
-    public void deleteUserBookmarks(Long userId) {
+    public void deleteUserBookmarks(Long userId,AuthModel authModel) {
+        info(LOG_SERVICE_OR_REPOSITORY, format("Checking role ", userId), this);
+        SecurityUtils.checkOwnerOrAdmin(userId.toString(),authModel);
         info(LOG_SERVICE_OR_REPOSITORY, format("Deleting User Bookmark of id ", userId), this);
         bookmarkRepository.deleteAllByUserId(userId);
         info(LOG_SERVICE_OR_REPOSITORY, format("Deleted bookmarks of user with id  ", userId), this);

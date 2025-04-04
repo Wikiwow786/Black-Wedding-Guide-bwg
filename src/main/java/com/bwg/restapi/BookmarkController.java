@@ -48,10 +48,10 @@ public class BookmarkController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUserBookmarks(@PathVariable Long userId,@AuthPrincipal AuthModel authModel) {
-        bookmarkService.deleteUserBookmarks(userId);
+        bookmarkService.deleteUserBookmarks(userId,authModel);
         return ResponseEntity.noContent().build();
     }
 }
