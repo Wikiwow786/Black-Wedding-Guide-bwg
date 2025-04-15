@@ -80,8 +80,8 @@ public class ServicesServiceImpl implements ServicesService {
         if (categoryId != null) {
             filter.and(QServices.services.category.categoryId.eq(categoryId));
         }
-        Page<Services> services = servicesRepository.findAll(filter, pageable);
-        List<Long> serviceIds = services.stream().map(Services::getServiceId).toList();
+        return servicesRepository.findAll(filter, pageable).map(ServicesModel::new);
+       /* List<Long> serviceIds = services.stream().map(Services::getServiceId).toList();
         List<Media> mediaEntities = mediaRepository.findAllByEntityIdIn(serviceIds);
 
         List<MediaModel> mediaModels = mediaEntities.stream()
@@ -94,8 +94,8 @@ public class ServicesServiceImpl implements ServicesService {
             ServicesModel model = new ServicesModel(service);
             model.setMedia(mediaMap.getOrDefault(service.getServiceId(), Collections.emptyList()));
             return model;
-        }).toList();
-        return new PageImpl<>(models, pageable, services.getTotalElements());
+        }).toList();*/
+        //return new PageImpl<>(models, pageable, services.getTotalElements());
     }
 
     @Override
