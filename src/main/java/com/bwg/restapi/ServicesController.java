@@ -4,7 +4,6 @@ import com.bwg.model.AuthModel;
 import com.bwg.model.ServicesModel;
 import com.bwg.resolver.AuthPrincipal;
 import com.bwg.service.ServicesService;
-import com.bwg.util.CorrelationIdHolder;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,9 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import static com.bwg.logger.Logger.info;
-import static com.bwg.logger.LoggingEvent.LOG_SERVICE_OR_REPOSITORY;
 
 
 @RestController
@@ -37,7 +33,7 @@ public class ServicesController {
                                                               @RequestParam(required = false) Double priceStart,
                                                               @RequestParam(required = false) Double priceEnd,
                                                               @AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(servicesService.getAllServices(search,tagName,location, rating, vendorId, categoryId, priceStart, priceEnd, pageable).map(ServicesModel::new));
+        return ResponseEntity.ok(servicesService.getAllServices(search,tagName,location, rating, vendorId, categoryId, priceStart, priceEnd, pageable));
     }
 
     @PermitAll

@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface MediaRepository extends JpaRepository<Media, Long>, QuerydslPredicateExecutor<Media> {
     List<Media> findAllByEntityId(Long entityId);
+    List<Media> findAllByEntityIdIn(List<Long> entityIds);
 }

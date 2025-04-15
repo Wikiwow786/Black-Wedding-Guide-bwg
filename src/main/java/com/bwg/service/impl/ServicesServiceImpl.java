@@ -1,23 +1,32 @@
 package com.bwg.service.impl;
 
+import com.bwg.domain.Media;
 import com.bwg.domain.QServices;
 import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.model.MediaModel;
 import com.bwg.model.ServicesModel;
 import com.bwg.repository.CategoriesRepository;
+import com.bwg.repository.MediaRepository;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.VendorsRepository;
+import com.bwg.service.MediaService;
 import com.bwg.service.ServicesService;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.bwg.logger.Logger.format;
 import static com.bwg.logger.Logger.info;
@@ -33,8 +42,11 @@ public class ServicesServiceImpl implements ServicesService {
     @Autowired
     private CategoriesRepository categoriesRepository;
 
+    @Autowired
+    private MediaRepository mediaRepository;
+
     @Override
-    public Page<Services> getAllServices(String search,String tagName,String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
+    public Page<ServicesModel> getAllServices(String search,String tagName,String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
         BooleanBuilder filter = new BooleanBuilder();
         if (StringUtils.isNotBlank(search)) {
@@ -68,7 +80,22 @@ public class ServicesServiceImpl implements ServicesService {
         if (categoryId != null) {
             filter.and(QServices.services.category.categoryId.eq(categoryId));
         }
-        return servicesRepository.findAll(filter, pageable);
+        Page<Services> services = servicesRepository.findAll(filter, pageable);
+        List<Long> serviceIds = services.stream().map(Services::getServiceId).toList();
+        List<Media> mediaEntities = mediaRepository.findAllByEntityIdIn(serviceIds);
+
+        List<MediaModel> mediaModels = mediaEntities.stream()
+                .map(MediaModel::new)
+                .toList();
+
+        Map<Long, List<MediaModel>> mediaMap = mediaModels.stream()
+                .collect(Collectors.groupingBy(MediaModel::getEntityId));
+        List<ServicesModel> models = services.stream().map(service -> {
+            ServicesModel model = new ServicesModel(service);
+            model.setMedia(mediaMap.getOrDefault(service.getServiceId(), Collections.emptyList()));
+            return model;
+        }).toList();
+        return new PageImpl<>(models, pageable, services.getTotalElements());
     }
 
     @Override
@@ -114,6 +141,7 @@ public class ServicesServiceImpl implements ServicesService {
     @Override
     public void deleteService(Long serviceId) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete Service information for Service Id {0} ", serviceId), this);
-        servicesRepository.deleteById(serviceId);
+        Services services = getServiceById(serviceId);
+        servicesRepository.delete(services);
     }
 }
