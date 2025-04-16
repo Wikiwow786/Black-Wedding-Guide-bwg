@@ -18,4 +18,12 @@ public class DateTimeProperties {
     public String getTimezone() {
         return timezone;
     }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
 }

@@ -1,5 +1,7 @@
 package com.bwg.enums;
 
+import com.bwg.exception.UnauthorizedException;
+
 public enum UserRole {
     ROLE_ADMIN,
     ROLE_COUPLE,
@@ -10,7 +12,7 @@ public enum UserRole {
         try {
             return UserRole.valueOf(role);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Unauthorized Role: " + role);
+            throw new UnauthorizedException("Unauthorized Role: " + role);
         }
     }
 }

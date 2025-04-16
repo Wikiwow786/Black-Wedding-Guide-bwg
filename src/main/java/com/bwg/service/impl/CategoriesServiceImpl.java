@@ -63,9 +63,12 @@ public class CategoriesServiceImpl implements CategoriesService {
         Objects.requireNonNull(categoryId, "categoryId ID cannot be null");
 
         info(LOG_SERVICE_OR_REPOSITORY, format("Update Category information for Category Id {0} ", categoryId), this);
-
         var category = categoriesRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        if(null != categoriesRepository.findByCategoryNameIgnoreCase(categoriesModel.categoryName())){
+            throw new ResourceAlreadyExistsException("Category name already exists.");
+        }
+
 
         BeanUtils.copyProperties(categoriesModel, category, "categoryId", "createdAt");
 

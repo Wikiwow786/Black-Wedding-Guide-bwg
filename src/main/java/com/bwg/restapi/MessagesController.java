@@ -35,12 +35,13 @@ public class MessagesController {
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_COUPLE')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessagesModel> createMessage(@RequestBody MessagesModel messagesModel, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagesModel(messagesService.createMessage(messagesModel, authModel)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(messagesService.createMessage(messagesModel, authModel));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_COUPLE')")
     @GetMapping(value = "/conversation/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MessagesModel>> getAllMessagesByUserId(@PathVariable(value = "userId") final Long userId, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(messagesService.getAllMessagesByUserId(userId).stream().map(MessagesModel::new).toList());
+        return ResponseEntity.ok(messagesService.getAllMessagesByUserId(userId));
     }
 }
+

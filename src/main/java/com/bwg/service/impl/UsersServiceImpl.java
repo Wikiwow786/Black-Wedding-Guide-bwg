@@ -70,7 +70,7 @@ public class UsersServiceImpl implements UsersService {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating User..."), this);
         String email = Optional.ofNullable(usersModel.getEmail()).orElse(authModel.email());
         String firstName = Optional.ofNullable(usersModel.getFirstName()).orElse(authModel.firstName());
-        String lastName = Optional.ofNullable(usersModel.getFirstName()).orElse(authModel.lastName());
+        String lastName = Optional.ofNullable(usersModel.getLastName()).orElse(authModel.lastName());
         String profilePicUrl = Optional.ofNullable(usersModel.getProfilePhotoUrl()).orElse(authModel.profilePicUrl());
 
         if (usersRepository.findByEmailIgnoreCase(email) != null) {

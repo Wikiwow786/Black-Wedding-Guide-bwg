@@ -42,7 +42,7 @@ public class BookingsServiceImpl implements BookingsService {
     private ServicesRepository servicesRepository;
 
     @Override
-    public Page<Bookings> getAllBookings(String search, Bookings.BookingStatus status, AuthModel authModel,  Pageable pageable) {
+    public Page<BookingsModel> getAllBookings(String search, Bookings.BookingStatus status, AuthModel authModel,  Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Users", this);
         BooleanBuilder filter = new BooleanBuilder();
 
@@ -57,7 +57,7 @@ public class BookingsServiceImpl implements BookingsService {
         if (status != null) {
             filter.and(QBookings.bookings.status.eq(status));
         }
-        return bookingsRepository.findAll(filter, pageable);
+        return bookingsRepository.findAll(filter, pageable).map(BookingsModel::new);
     }
 
     @Override

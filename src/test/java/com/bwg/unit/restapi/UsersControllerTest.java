@@ -1,4 +1,3 @@
-/*
 package com.bwg.unit.restapi;
 
 import com.bwg.config.MethodSecurityConfig;
@@ -164,4 +163,3 @@ public class UsersControllerTest extends BaseControllerTest{
 
 
 }
-*/

@@ -13,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -124,10 +122,12 @@ public class MediaServiceImpl implements MediaService {
     @Override
     public void deleteMedia(Long mediaId) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete Media information for Media Id {0} ", mediaId), this);
-        mediaRepository.deleteById(mediaId);
+        Media media = mediaRepository.findById(mediaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Media not found"));
+        mediaRepository.delete(media);
     }
 
-    private Pair<ByteArrayInputStream, String> generateThumbnailStream(MultipartFile file) throws IOException {
+    public Pair<ByteArrayInputStream, String> generateThumbnailStream(MultipartFile file) throws IOException {
         ImageIO.scanForPlugins();
         try (InputStream originalInputStream = file.getInputStream();
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {

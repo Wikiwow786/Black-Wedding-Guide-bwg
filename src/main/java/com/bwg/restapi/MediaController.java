@@ -32,7 +32,7 @@ public class MediaController {
         return ResponseEntity.ok(mediaService.getAllMedia(search,entityId,pageable).map(MediaModel::new));
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_OWNER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/{mediaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MediaModel> getMediaById(@PathVariable(value = "mediaId") final Long mediaId, @AuthPrincipal AuthModel authModel) {
         return ResponseEntity.ok(new MediaModel(mediaService.getMedia(mediaId)));

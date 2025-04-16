@@ -12,7 +12,7 @@ import java.util.List;
 public interface MessagesService {
     Page<MessagesModel> getAllMessages(String search, String conversationId, AuthModel authModel, Pageable pageable);
 
-    Messages createMessage(MessagesModel messagesModel, AuthModel authModel);
+    MessagesModel createMessage(MessagesModel messagesModel, AuthModel authModel);
 
-    List<Messages> getAllMessagesByUserId(Long userId);
+    List<MessagesModel> getAllMessagesByUserId(Long userId);
 }

@@ -47,7 +47,7 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public Messages createMessage(MessagesModel messagesModel, AuthModel authModel) {
+    public MessagesModel createMessage(MessagesModel messagesModel, AuthModel authModel) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Creating Message..."), this);
 
         Messages messages = new Messages();
@@ -59,12 +59,12 @@ public class MessagesServiceImpl implements MessagesService {
                 .orElseThrow(() -> new ResourceNotFoundException("Receiver not found")));
 
         messages.setSentAt(OffsetDateTime.now());
-        return messagesRepository.save(messages);
+        return new MessagesModel(messagesRepository.save(messages));
     }
 
     @Override
-    public List<Messages> getAllMessagesByUserId(Long userId) {
+    public List<MessagesModel> getAllMessagesByUserId(Long userId) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Message by Id {0}", userId);
-        return messagesRepository.findAllBySender_UserId(userId);
+        return messagesRepository.findAllBySender_UserId(userId).stream().map(MessagesModel::new).toList();
     }
 }

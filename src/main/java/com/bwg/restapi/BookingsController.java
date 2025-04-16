@@ -26,7 +26,7 @@ public class BookingsController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER', 'ROLE_COUPLE')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<BookingsModel>> getAllBookings(@RequestParam(required = false) String search, @RequestParam(required = false) Bookings.BookingStatus status, @AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(bookingsService.getAllBookings(search, status, authModel, pageable).map(BookingsModel::new));
+        return ResponseEntity.ok(bookingsService.getAllBookings(search, status, authModel, pageable));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN' , 'ROLE_VENDOR' , 'ROLE_OWNER')")

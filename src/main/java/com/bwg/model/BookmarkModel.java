@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.OffsetDateTime;
 
+
 public record BookmarkModel(Long bookMarkId, Long userId, String title, String imageUrl, String uBookMarkId, @JsonSerialize(using = OffsetDateTimeCustomSerializer.class)OffsetDateTime createdAt) {
 
     public BookmarkModel(Bookmarks bookmark) {
