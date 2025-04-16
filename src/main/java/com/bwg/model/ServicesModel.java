@@ -43,7 +43,7 @@ public class ServicesModel {
     @JsonProperty(value = "reviews")
     private List<ReviewsModel> reviewsModel;
     private Set<TagModel> tags;
-    private List<MediaModel> media;
+    private String primaryImagePublicUrl;
 
     public ServicesModel() {
     }
@@ -273,11 +273,11 @@ public class ServicesModel {
         this.location = location;
     }
 
-    public List<MediaModel> getMedia() {
-        return media;
+    public String getPrimaryImagePublicUrl() {
+        return primaryImagePublicUrl;
     }
 
-    public void setMedia(List<MediaModel> media) {
-        this.media = media;
+    public void setPrimaryImagePublicUrl(String primaryImagePublicUrl) {
+        this.primaryImagePublicUrl = primaryImagePublicUrl;
     }
 }

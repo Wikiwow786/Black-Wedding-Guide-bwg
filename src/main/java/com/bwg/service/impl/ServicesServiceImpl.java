@@ -10,7 +10,6 @@ import com.bwg.repository.CategoriesRepository;
 import com.bwg.repository.MediaRepository;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.VendorsRepository;
-import com.bwg.service.MediaService;
 import com.bwg.service.ServicesService;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -80,22 +78,15 @@ public class ServicesServiceImpl implements ServicesService {
         if (categoryId != null) {
             filter.and(QServices.services.category.categoryId.eq(categoryId));
         }
-        return servicesRepository.findAll(filter, pageable).map(ServicesModel::new);
-       /* List<Long> serviceIds = services.stream().map(Services::getServiceId).toList();
-        List<Media> mediaEntities = mediaRepository.findAllByEntityIdIn(serviceIds);
+        Page<Services> servicesPage = servicesRepository.findAll(filter, pageable);
+        List<Services> services = servicesPage.getContent();
 
-        List<MediaModel> mediaModels = mediaEntities.stream()
-                .map(MediaModel::new)
+        Map<Long, String> primaryImageUrlMap = fetchPrimaryImageUrls(services);
+
+        List<ServicesModel> models = services.stream()
+                .map(service -> mapToModelWithPrimaryImage(service, primaryImageUrlMap))
                 .toList();
-
-        Map<Long, List<MediaModel>> mediaMap = mediaModels.stream()
-                .collect(Collectors.groupingBy(MediaModel::getEntityId));
-        List<ServicesModel> models = services.stream().map(service -> {
-            ServicesModel model = new ServicesModel(service);
-            model.setMedia(mediaMap.getOrDefault(service.getServiceId(), Collections.emptyList()));
-            return model;
-        }).toList();*/
-        //return new PageImpl<>(models, pageable, services.getTotalElements());
+        return new PageImpl<>(models, pageable, servicesPage.getTotalElements());
     }
 
     @Override
@@ -144,4 +135,29 @@ public class ServicesServiceImpl implements ServicesService {
         Services services = getServiceById(serviceId);
         servicesRepository.delete(services);
     }
+
+    private Map<Long, String> fetchPrimaryImageUrls(List<Services> services) {
+        List<Long> serviceIds = services.stream()
+                .map(Services::getServiceId)
+                .toList();
+
+        List<MediaModel> mediaModels = mediaRepository.findAllByEntityIdIn(serviceIds).stream()
+                .map(MediaModel::new)
+                .toList();
+        return mediaModels.stream()
+                .collect(Collectors.groupingBy(
+                        MediaModel::getEntityId,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list.get(0).getPublicUrl()
+                        )
+                ));
+    }
+
+    private ServicesModel mapToModelWithPrimaryImage(Services service, Map<Long, String> primaryImageUrlMap) {
+        ServicesModel model = new ServicesModel(service);
+        model.setPrimaryImagePublicUrl(primaryImageUrlMap.get(service.getServiceId()));
+        return model;
+    }
+
 }
