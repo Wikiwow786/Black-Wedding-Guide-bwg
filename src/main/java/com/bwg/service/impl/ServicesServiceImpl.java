@@ -149,7 +149,7 @@ public class ServicesServiceImpl implements ServicesService {
                         MediaModel::getEntityId,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
-                                list -> list.get(0).getPublicUrl()
+                                list -> list.get(0).getPublicThumbnailUrl()
                         )
                 ));
     }
