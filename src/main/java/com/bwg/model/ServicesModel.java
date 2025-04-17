@@ -282,7 +282,6 @@ public class ServicesModel {
     public void setPrimaryImagePublicUrl(String primaryImagePublicUrl) {
         this.primaryImagePublicUrl = primaryImagePublicUrl;
     }
-
     public MediaModel getMediaModel() {
         return mediaModel;
     }
