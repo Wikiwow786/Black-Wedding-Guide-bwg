@@ -55,7 +55,7 @@ public class ServicesServiceImpl implements ServicesService {
         Map<Long, List<MediaModel>> mediaMap = fetchMediaGroupedByServiceId(services);
 
         List<ServicesModel> models = services.stream()
-                .map(service -> mapToModelWithMediaGroup(service, mediaMap))
+                .map(service -> mapToModelWithFirstMedia(service, mediaMap))
                 .toList();
         return new PageImpl<>(models, pageable, servicesPage.getTotalElements());
     }
@@ -141,17 +141,16 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
 
-    private ServicesModel mapToModelWithMediaGroup(Services service, Map<Long, List<MediaModel>> mediaMap) {
+    private ServicesModel mapToModelWithFirstMedia(Services service, Map<Long, List<MediaModel>> mediaMap) {
         ServicesModel model = new ServicesModel(service);
 
         List<MediaModel> mediaList = mediaMap.getOrDefault(service.getServiceId(), Collections.emptyList());
 
         if (!mediaList.isEmpty()) {
-            model.setPrimaryImagePublicUrl(mediaList.get(0).getPublicUrl());
+            MediaModel firstMedia = mediaList.get(0);
+            model.setPrimaryImagePublicUrl(firstMedia.getPublicUrl());
+            model.setMediaModel(firstMedia);
         }
-
-        model.setMediaGroupModel(new MediaGroupModel(mediaList));
-
         return model;
     }
 

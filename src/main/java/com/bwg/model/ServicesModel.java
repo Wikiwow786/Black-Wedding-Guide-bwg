@@ -44,7 +44,8 @@ public class ServicesModel {
     private List<ReviewsModel> reviewsModel;
     private Set<TagModel> tags;
     private String primaryImagePublicUrl;
-    private MediaGroupModel mediaGroupModel;
+    @JsonProperty(value = "media")
+    private MediaModel mediaModel;
 
     public ServicesModel() {
     }
@@ -282,11 +283,11 @@ public class ServicesModel {
         this.primaryImagePublicUrl = primaryImagePublicUrl;
     }
 
-    public MediaGroupModel getMediaGroupModel() {
-        return mediaGroupModel;
+    public MediaModel getMediaModel() {
+        return mediaModel;
     }
 
-    public void setMediaGroupModel(MediaGroupModel mediaGroupModel) {
-        this.mediaGroupModel = mediaGroupModel;
+    public void setMediaModel(MediaModel mediaModel) {
+        this.mediaModel = mediaModel;
     }
 }
