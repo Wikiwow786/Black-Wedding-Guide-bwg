@@ -52,7 +52,6 @@ public class ServicesServiceImpl implements ServicesService {
 
         Page<Services> servicesPage = servicesRepository.findAll(filter, pageable);
         List<Services> services = servicesPage.getContent();
-
         Map<Long, List<MediaModel>> mediaMap = fetchMediaGroupedByServiceId(services);
 
         List<ServicesModel> models = services.stream()
