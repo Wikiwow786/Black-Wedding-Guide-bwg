@@ -45,7 +45,7 @@ public class ServicesModel {
     private Set<TagModel> tags;
     private String primaryImagePublicUrl;
     @JsonProperty(value = "media")
-    private MediaModel mediaModel;
+    private List<MediaModel> mediaModel;
 
     public ServicesModel() {
     }
@@ -282,11 +282,12 @@ public class ServicesModel {
     public void setPrimaryImagePublicUrl(String primaryImagePublicUrl) {
         this.primaryImagePublicUrl = primaryImagePublicUrl;
     }
-    public MediaModel getMediaModel() {
+
+    public List<MediaModel> getMediaModel() {
         return mediaModel;
     }
 
-    public void setMediaModel(MediaModel mediaModel) {
+    public void setMediaModel(List<MediaModel> mediaModel) {
         this.mediaModel = mediaModel;
     }
 }

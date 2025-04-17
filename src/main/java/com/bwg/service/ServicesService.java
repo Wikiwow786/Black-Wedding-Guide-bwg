@@ -9,7 +9,7 @@ public interface ServicesService {
 
     Page<ServicesModel> getAllServices(String search,String tagName,String location, Integer rating,  Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable);
 
-    Services getServiceById(Long serviceId);
+    ServicesModel getServiceById(Long serviceId);
 
     Services createService(ServicesModel servicesModel);
 

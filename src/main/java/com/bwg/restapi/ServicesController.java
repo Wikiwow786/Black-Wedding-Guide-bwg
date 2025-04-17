@@ -39,7 +39,7 @@ public class ServicesController {
     @PermitAll
     @GetMapping(value = "/{serviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServicesModel> getServicesById(@PathVariable(value = "serviceId") final Long serviceId, @AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(new ServicesModel(servicesService.getServiceById(serviceId)));
+        return ResponseEntity.ok(servicesService.getServiceById(serviceId));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR')")

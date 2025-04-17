@@ -102,7 +102,7 @@ public class ServicesServiceImplTest {
 
         when(servicesRepository.findById(serviceId)).thenReturn(Optional.of(service));
 
-        Services result = servicesService.getServiceById(serviceId);
+        ServicesModel result = servicesService.getServiceById(serviceId);
 
         assertNotNull(result);
         assertEquals("Wedding Photography", result.getServiceName());

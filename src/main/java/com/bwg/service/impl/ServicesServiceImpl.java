@@ -4,13 +4,13 @@ package com.bwg.service.impl;
 import com.bwg.domain.QServices;
 import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
-import com.bwg.model.MediaGroupModel;
 import com.bwg.model.MediaModel;
 import com.bwg.model.ServicesModel;
 import com.bwg.repository.CategoriesRepository;
 import com.bwg.repository.MediaRepository;
 import com.bwg.repository.ServicesRepository;
 import com.bwg.repository.VendorsRepository;
+import com.bwg.service.MediaService;
 import com.bwg.service.ServicesService;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +44,8 @@ public class ServicesServiceImpl implements ServicesService {
 
     @Autowired
     private MediaRepository mediaRepository;
+    @Autowired
+    private MediaService mediaService;
 
     @Override
     public Page<ServicesModel> getAllServices(String search,String tagName,String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
@@ -61,10 +63,13 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
     @Override
-    public Services getServiceById(Long serviceId) {
+    public ServicesModel getServiceById(Long serviceId) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching Service by Id {0}", serviceId);
-        return servicesRepository.findById(serviceId)
+        Services services = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service Not Found"));
+        ServicesModel servicesModel = new ServicesModel(services);
+        servicesModel.setMediaModel(mediaService.getByEntity(serviceId));
+        return servicesModel;
     }
 
     @Override
@@ -103,7 +108,8 @@ public class ServicesServiceImpl implements ServicesService {
     @Override
     public void deleteService(Long serviceId) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Delete Service information for Service Id {0} ", serviceId), this);
-        Services services = getServiceById(serviceId);
+        Services services = servicesRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service Not Found"));
         servicesRepository.delete(services);
     }
 
@@ -142,16 +148,16 @@ public class ServicesServiceImpl implements ServicesService {
 
 
     private ServicesModel mapToModelWithFirstMedia(Services service, Map<Long, List<MediaModel>> mediaMap) {
-        ServicesModel model = new ServicesModel(service);
+        ServicesModel servicesModel = new ServicesModel(service);
 
         List<MediaModel> mediaList = mediaMap.getOrDefault(service.getServiceId(), Collections.emptyList());
 
-        if (!mediaList.isEmpty()) {
-            MediaModel firstMedia = mediaList.get(0);
-            model.setPrimaryImagePublicUrl(firstMedia.getPublicUrl());
-            model.setMediaModel(firstMedia);
+        if (mediaList != null && !mediaList.isEmpty()) {
+            servicesModel.setMediaModel(List.of(mediaList.get(0)));
+        } else {
+            servicesModel.setMediaModel(Collections.emptyList());
         }
-        return model;
+        return servicesModel;
     }
 
 
