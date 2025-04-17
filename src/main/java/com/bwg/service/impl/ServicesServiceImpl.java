@@ -1,9 +1,10 @@
 package com.bwg.service.impl;
 
-import com.bwg.domain.Media;
+
 import com.bwg.domain.QServices;
 import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.model.MediaGroupModel;
 import com.bwg.model.MediaModel;
 import com.bwg.model.ServicesModel;
 import com.bwg.repository.CategoriesRepository;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,45 +48,15 @@ public class ServicesServiceImpl implements ServicesService {
     @Override
     public Page<ServicesModel> getAllServices(String search,String tagName,String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
-        BooleanBuilder filter = new BooleanBuilder();
-        if (StringUtils.isNotBlank(search)) {
-            filter.and(QServices.services.serviceName.containsIgnoreCase(search));
-        }
+        BooleanBuilder filter = buildServiceFilter(search, tagName, location, rating, vendorId, categoryId, priceStart, priceEnd);
 
-        if(StringUtils.isNotBlank(tagName)){
-            filter.and(QServices.services.tags.any().name.containsIgnoreCase(tagName));
-        }
-
-        if(StringUtils.isNotBlank(location)){
-            filter.and(QServices.services.location.containsIgnoreCase(location));
-        }
-
-        if (priceStart != null) {
-            filter.and(QServices.services.priceMin.goe(priceStart));
-        }
-
-        if (priceEnd != null) {
-            filter.and(QServices.services.priceMax.loe(priceEnd));
-        }
-
-        if (vendorId != null) {
-            filter.and(QServices.services.vendor.vendorId.eq(vendorId));
-        }
-
-        if (rating != null) {
-            filter.and(QServices.services.reviews.any().rating.goe(rating));
-        }
-
-        if (categoryId != null) {
-            filter.and(QServices.services.category.categoryId.eq(categoryId));
-        }
         Page<Services> servicesPage = servicesRepository.findAll(filter, pageable);
         List<Services> services = servicesPage.getContent();
 
-        Map<Long, String> primaryImageUrlMap = fetchPrimaryImageUrls(services);
+        Map<Long, List<MediaModel>> mediaMap = fetchMediaGroupedByServiceId(services);
 
         List<ServicesModel> models = services.stream()
-                .map(service -> mapToModelWithPrimaryImage(service, primaryImageUrlMap))
+                .map(service -> mapToModelWithMediaGroup(service, mediaMap))
                 .toList();
         return new PageImpl<>(models, pageable, servicesPage.getTotalElements());
     }
@@ -136,28 +108,62 @@ public class ServicesServiceImpl implements ServicesService {
         servicesRepository.delete(services);
     }
 
-    private Map<Long, String> fetchPrimaryImageUrls(List<Services> services) {
-        List<Long> serviceIds = services.stream()
-                .map(Services::getServiceId)
-                .toList();
+    private BooleanBuilder buildServiceFilter(String search, String tagName, String location,
+                                              Integer rating, Long vendorId, Long categoryId,
+                                              Double priceStart, Double priceEnd) {
+        BooleanBuilder filter = new BooleanBuilder();
 
-        List<MediaModel> mediaModels = mediaRepository.findAllByEntityIdIn(serviceIds).stream()
-                .map(MediaModel::new)
-                .toList();
-        return mediaModels.stream()
-                .collect(Collectors.groupingBy(
-                        MediaModel::getEntityId,
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> list.get(0).getPublicThumbnailUrl()
-                        )
-                ));
+        if (StringUtils.isNotBlank(search)) {
+            filter.and(QServices.services.serviceName.containsIgnoreCase(search));
+        }
+        if (StringUtils.isNotBlank(tagName)) {
+            filter.and(QServices.services.tags.any().name.containsIgnoreCase(tagName));
+        }
+        if (StringUtils.isNotBlank(location)) {
+            filter.and(QServices.services.location.containsIgnoreCase(location));
+        }
+        if (priceStart != null) {
+            filter.and(QServices.services.priceMin.goe(priceStart));
+        }
+        if (priceEnd != null) {
+            filter.and(QServices.services.priceMax.loe(priceEnd));
+        }
+        if (vendorId != null) {
+            filter.and(QServices.services.vendor.vendorId.eq(vendorId));
+        }
+        if (rating != null) {
+            filter.and(QServices.services.reviews.any().rating.goe(rating));
+        }
+        if (categoryId != null) {
+            filter.and(QServices.services.category.categoryId.eq(categoryId));
+        }
+
+        return filter;
     }
 
-    private ServicesModel mapToModelWithPrimaryImage(Services service, Map<Long, String> primaryImageUrlMap) {
+
+    private ServicesModel mapToModelWithMediaGroup(Services service, Map<Long, List<MediaModel>> mediaMap) {
         ServicesModel model = new ServicesModel(service);
-        model.setPrimaryImagePublicUrl(primaryImageUrlMap.get(service.getServiceId()));
+
+        List<MediaModel> mediaList = mediaMap.getOrDefault(service.getServiceId(), Collections.emptyList());
+
+        if (!mediaList.isEmpty()) {
+            model.setPrimaryImagePublicUrl(mediaList.get(0).getPublicUrl());
+        }
+
+        model.setMediaGroupModel(new MediaGroupModel(mediaList));
+
         return model;
     }
+
+
+    private Map<Long, List<MediaModel>> fetchMediaGroupedByServiceId(List<Services> services) {
+        List<Long> serviceIds = services.stream().map(Services::getServiceId).toList();
+
+        return mediaRepository.findAllByEntityIdIn(serviceIds).stream()
+                .map(MediaModel::new)
+                .collect(Collectors.groupingBy(MediaModel::getEntityId));
+    }
+
 
 }

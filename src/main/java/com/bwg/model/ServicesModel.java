@@ -44,6 +44,7 @@ public class ServicesModel {
     private List<ReviewsModel> reviewsModel;
     private Set<TagModel> tags;
     private String primaryImagePublicUrl;
+    private MediaGroupModel mediaGroupModel;
 
     public ServicesModel() {
     }
@@ -279,5 +280,13 @@ public class ServicesModel {
 
     public void setPrimaryImagePublicUrl(String primaryImagePublicUrl) {
         this.primaryImagePublicUrl = primaryImagePublicUrl;
+    }
+
+    public MediaGroupModel getMediaGroupModel() {
+        return mediaGroupModel;
+    }
+
+    public void setMediaGroupModel(MediaGroupModel mediaGroupModel) {
+        this.mediaGroupModel = mediaGroupModel;
     }
 }
