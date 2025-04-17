@@ -154,6 +154,7 @@ public class ServicesServiceImpl implements ServicesService {
 
         if (mediaList != null && !mediaList.isEmpty()) {
             servicesModel.setMediaModel(List.of(mediaList.get(0)));
+            servicesModel.setPrimaryImagePublicUrl(mediaList.get(0).getPublicThumbnailUrl());
         } else {
             servicesModel.setMediaModel(Collections.emptyList());
         }
