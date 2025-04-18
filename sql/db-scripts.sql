@@ -303,5 +303,17 @@ CREATE TABLE bwg.bookmarks (
 
 CREATE INDEX idx_bookmark_user_id ON bookmark(user_id);
 
+CREATE TABLE bwg.wedding_profile (
+    wedding_profile_id BIGINT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE REFERENCES bwg.users(user_id),
+    wedding_date DATE,
+    guest_count INTEGER,
+	u_wedding_id varchar,
+    total_budget DECIMAL(12, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_wedding_profile_user_id ON wedding_profile(user_id);
+
 
 

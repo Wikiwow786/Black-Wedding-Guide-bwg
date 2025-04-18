@@ -84,7 +84,8 @@ public class S3StorageServiceImpl implements StorageService {
         String s3Key = s3Folder + fileName;
         try {
 
-            Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 60);
+           // Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 60);
+            Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
 
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucketName, s3Key)

@@ -46,6 +46,7 @@ public class ServicesModel {
     private String primaryImagePublicUrl;
     @JsonProperty(value = "media")
     private List<MediaModel> mediaModel;
+    private boolean bookmarked;
 
     public ServicesModel() {
     }
@@ -289,5 +290,13 @@ public class ServicesModel {
 
     public void setMediaModel(List<MediaModel> mediaModel) {
         this.mediaModel = mediaModel;
+    }
+
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
+
+    public void setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
     }
 }

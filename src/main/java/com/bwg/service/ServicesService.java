@@ -1,13 +1,14 @@
 package com.bwg.service;
 
 import com.bwg.domain.Services;
+import com.bwg.model.AuthModel;
 import com.bwg.model.ServicesModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ServicesService {
 
-    Page<ServicesModel> getAllServices(String search,String tagName,String location, Integer rating,  Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable);
+    Page<ServicesModel> getAllServices(String search, String tagName, String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, AuthModel authModel, Pageable pageable);
 
     ServicesModel getServiceById(Long serviceId);
 

@@ -1,15 +1,14 @@
 package com.bwg.service.impl;
 
 
+import com.bwg.domain.Media;
 import com.bwg.domain.QServices;
 import com.bwg.domain.Services;
 import com.bwg.exception.ResourceNotFoundException;
+import com.bwg.model.AuthModel;
 import com.bwg.model.MediaModel;
 import com.bwg.model.ServicesModel;
-import com.bwg.repository.CategoriesRepository;
-import com.bwg.repository.MediaRepository;
-import com.bwg.repository.ServicesRepository;
-import com.bwg.repository.VendorsRepository;
+import com.bwg.repository.*;
 import com.bwg.service.MediaService;
 import com.bwg.service.ServicesService;
 import com.querydsl.core.BooleanBuilder;
@@ -45,19 +44,36 @@ public class ServicesServiceImpl implements ServicesService {
     @Autowired
     private MediaRepository mediaRepository;
     @Autowired
+    private BookmarkRepository bookmarkRepository;
+    @Autowired
     private MediaService mediaService;
 
     @Override
-    public Page<ServicesModel> getAllServices(String search,String tagName,String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, Pageable pageable) {
+    public Page<ServicesModel> getAllServices(String search, String tagName, String location, Integer rating, Long vendorId, Long categoryId, Double priceStart, Double priceEnd, AuthModel authModel, Pageable pageable) {
         info(LOG_SERVICE_OR_REPOSITORY, "Fetching All Services", this);
         BooleanBuilder filter = buildServiceFilter(search, tagName, location, rating, vendorId, categoryId, priceStart, priceEnd);
 
         Page<Services> servicesPage = servicesRepository.findAll(filter, pageable);
         List<Services> services = servicesPage.getContent();
         Map<Long, List<MediaModel>> mediaMap = fetchMediaGroupedByServiceId(services);
+        final List<Long> bookmarkedIds;
+        if (authModel.userId() != null) {
+            List<Long> serviceIds = services.stream()
+                    .map(Services::getServiceId)
+                    .collect(Collectors.toList());
 
+            bookmarkedIds = bookmarkRepository.findEntityIdsByUserIdAndType(
+                   Long.parseLong(authModel.userId()), Media.EntityType.service, serviceIds
+            );
+        }
+        else{
+            bookmarkedIds = Collections.emptyList();
+        }
         List<ServicesModel> models = services.stream()
-                .map(service -> mapToModelWithFirstMedia(service, mediaMap))
+                .map(service -> {
+                    boolean isBookmarked = bookmarkedIds.contains(service.getServiceId());
+                    return mapToModelWithFirstMedia(service, mediaMap, isBookmarked);
+                })
                 .toList();
         return new PageImpl<>(models, pageable, servicesPage.getTotalElements());
     }
@@ -147,7 +163,7 @@ public class ServicesServiceImpl implements ServicesService {
     }
 
 
-    private ServicesModel mapToModelWithFirstMedia(Services service, Map<Long, List<MediaModel>> mediaMap) {
+    private ServicesModel mapToModelWithFirstMedia(Services service, Map<Long, List<MediaModel>> mediaMap,boolean bookmarked) {
         ServicesModel servicesModel = new ServicesModel(service);
 
         List<MediaModel> mediaList = mediaMap.getOrDefault(service.getServiceId(), Collections.emptyList());
@@ -158,6 +174,7 @@ public class ServicesServiceImpl implements ServicesService {
         } else {
             servicesModel.setMediaModel(Collections.emptyList());
         }
+        servicesModel.setBookmarked(bookmarked);
         return servicesModel;
     }
 

@@ -2,7 +2,6 @@ package com.bwg.service.impl;
 
 import com.bwg.domain.Bookmarks;
 import com.bwg.domain.QBookmarks;
-import com.bwg.domain.Users;
 import com.bwg.enums.UserRole;
 import com.bwg.exception.ResourceNotFoundException;
 import com.bwg.model.AuthModel;
@@ -46,8 +45,8 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public List<BookmarkModel> getUserBookmarks(Long userId, AuthModel authModel) {
-        return bookmarkRepository.findAllByUserId(userId).stream().map(BookmarkModel::new).toList();
+    public List<BookmarkModel> getUserBookmarks(AuthModel authModel) {
+        return bookmarkRepository.findAllByUserId(Long.parseLong(authModel.userId())).stream().map(BookmarkModel::new).toList();
     }
 
     @Override
@@ -81,9 +80,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     private Bookmarks assemble(BookmarkModel bookmarkModel, AuthModel authModel){
         Bookmarks bookmarks = new Bookmarks();
-        usersRepository.findById(bookmarkModel.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         BeanUtils.copyProperties(bookmarkModel, bookmarks);
+        bookmarks.setUserId(Long.parseLong(authModel.userId()));
         bookmarks.setCreatedAt(OffsetDateTime.now());
         return bookmarks;
     }

@@ -83,7 +83,7 @@ class BookmarkControllerTest {
 
         doReturn(bookmarks)
                 .when(bookmarkService)
-                .getUserBookmarks(eq(42L), any(AuthModel.class));
+                .getUserBookmarks(any(AuthModel.class));
 
         mockMvc.perform(get("/bookmarks/user/42")
                         .accept(MediaType.APPLICATION_JSON))

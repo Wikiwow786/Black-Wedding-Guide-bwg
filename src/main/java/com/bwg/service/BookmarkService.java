@@ -12,7 +12,7 @@ public interface BookmarkService {
 
     Page<BookmarkModel> getAllBookmarks(String search, AuthModel authModel, Pageable pageable);
 
-    List<BookmarkModel> getUserBookmarks(Long userId, AuthModel authModel);
+    List<BookmarkModel> getUserBookmarks(AuthModel authModel);
 
     BookmarkModel createBookmark(BookmarkModel bookmark, AuthModel authModel);
 

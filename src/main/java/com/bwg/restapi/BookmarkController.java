@@ -30,9 +30,9 @@ public class BookmarkController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping(value = "/user/{userId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookmarkModel>> getByUser(@PathVariable(value = "userId") Long userId,@AuthPrincipal AuthModel authModel) {
-        return ResponseEntity.ok(bookmarkService.getUserBookmarks(userId,authModel));
+    @GetMapping(value = "/user",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BookmarkModel>> getByUser(@AuthPrincipal AuthModel authModel) {
+        return ResponseEntity.ok(bookmarkService.getUserBookmarks(authModel));
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -22,14 +22,18 @@ public class Bookmarks {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "image_url")
-    private String imageUrl;
-
     @Column(name = "u_bookmark_id")
     private String uBookMarkId;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP")
     private OffsetDateTime createdAt;
+
+    @Column(name = "entity_id")
+    private Long entityId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "entity_type")
+    private Media.EntityType entityType;
 
     @PrePersist
     public void setUBookingId() {
@@ -60,13 +64,6 @@ public class Bookmarks {
         this.title = title;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
 
     public String getuBookMarkId() {
         return uBookMarkId;
@@ -82,6 +79,22 @@ public class Bookmarks {
 
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
+    }
+
+    public Media.EntityType getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(Media.EntityType entityType) {
+        this.entityType = entityType;
     }
 }
 

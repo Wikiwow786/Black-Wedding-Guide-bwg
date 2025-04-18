@@ -33,7 +33,7 @@ public class ServicesController {
                                                               @RequestParam(required = false) Double priceStart,
                                                               @RequestParam(required = false) Double priceEnd,
                                                               @AuthPrincipal AuthModel authModel, Pageable pageable) {
-        return ResponseEntity.ok(servicesService.getAllServices(search,tagName,location, rating, vendorId, categoryId, priceStart, priceEnd, pageable));
+        return ResponseEntity.ok(servicesService.getAllServices(search,tagName,location, rating, vendorId, categoryId, priceStart, priceEnd,authModel, pageable));
     }
 
     @PermitAll
