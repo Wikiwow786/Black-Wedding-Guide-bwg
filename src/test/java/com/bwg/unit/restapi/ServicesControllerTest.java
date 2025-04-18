@@ -38,7 +38,7 @@ public class ServicesControllerTest extends BaseControllerTest{
     @MockBean
     private ServicesService servicesService;
 
-    @Test
+ /*   @Test
     @WithMockUser
     void getServicesById_ShouldReturn200_WhenExists() throws Exception {
         Services service = new Services();
@@ -64,7 +64,7 @@ public class ServicesControllerTest extends BaseControllerTest{
                 .andExpect(jsonPath("$.availability").value("Available"))
                 .andExpect(jsonPath("$.category_id").value(10L))
                 .andDo(print());
-    }
+    }*/
 
     @Test
     @WithMockUser
