@@ -15,5 +15,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmarks,Long>, Query
     void deleteAllByUserId(Long userId);
     @Query("SELECT b.entityId FROM Bookmarks b WHERE b.userId = :userId AND b.entityType = :type AND b.entityId IN :ids")
     List<Long> findEntityIdsByUserIdAndType(Long userId, Media.EntityType type, List<Long> ids);
-
+    Bookmarks findByEntityId(Long entityId);
 }

@@ -63,8 +63,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Override
     public void deleteBookmark(Long bookmarkId) {
         info(LOG_SERVICE_OR_REPOSITORY, format("Deleting Bookmark ", bookmarkId), this);
-        Bookmarks bookmarks = bookmarkRepository.findById(bookmarkId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Bookmark not found"));
+        Bookmarks bookmarks = bookmarkRepository.findByEntityId(bookmarkId);
         bookmarkRepository.delete(bookmarks);
     }
 
