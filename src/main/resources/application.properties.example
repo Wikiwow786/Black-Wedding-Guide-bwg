@@ -1,0 +1,40 @@
+# Server & context path
+server.port=8080
+server.servlet.contextPath=/api/v1
+
+# GraphQL
+spring.graphql.graphiql.enabled=true
+
+# Datasource settings (PostgreSQL)
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://<db-host>:5432/<db-name>
+spring.datasource.username=<db-username>
+spring.datasource.password=<db-password>
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# Jackson JSON naming
+spring.jackson.property-naming-strategy=SNAKE_CASE
+
+# Time format & zone
+datetime.format=yyyy-MM-dd'T'HH:mm:ssX
+datetime.timezone=UTC
+
+# API authentication endpoint
+api.auth.register=/api/v1/auth/register
+
+# Swagger / OpenAPI
+springdoc.api-docs.path=/api-docs
+springdoc.pathsToMatch=/**
+spring.main.allow-circular-references=true
+
+# Error handling
+server.error.include-message=always
+server.error.include-binding-errors=always
+server.error.include-stacktrace=on_param
+server.error.include-exception=false
+
+# Storage config
+storage.type=S3
+# media.storage.local-path=C:/path/to/local/storage
+cloud.aws.s3.bucket=<your-s3-bucket-name>
+s3.folder=app_data/
